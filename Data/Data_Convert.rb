@@ -85,4 +85,15 @@ module Data_Convert
 
   module_function :deleteNilPath
 
+  #删除不满足信号强度的路径
+  def deleteWeakSignalPath(pathArray)
+    pathArray.each do |path|
+      if path[0] < -200
+        pathArray = pathArray.delete(path)
+      end
+    end
+    return pathArray
+  end
+  module_function :deleteWeakSignalPath
+
 end

@@ -89,7 +89,7 @@ module Ray_Refract
           pointDistance = Space_Base.pointDistance(beginPoint, interPoint)
           if pointDistance.nan? == true then
             p "Module: Ray_Refract Method: interSortCube Nan pointDistance: #{pointDistance}"
-            pointDistance = 0 #处理NaN
+            pointDistance = 0 #处理NaN,Bug修复后可删除
           end
           cubeHash[pointDistance] = cube
           break

@@ -96,10 +96,22 @@ module Space_Base
     len = 0.0
     for i in 0..n-2
       len = len + pointDistance(path[i],path[i+1])
+      #p "点顺序:#{path[i]}"
+      #p "局部距离:#{pointDistance(path[i],path[i+1])}"
+      #p "部分求和距离:#{len}"
     end
+
+    len2 =  pointDistance(path[0],path[n-1])
+      p "--------------距离差异-------------"
+      p "实际距离:#{len2}"
+      p "数组路径距离:#{len}"
     delay = len*1.0/speed
     return delay;
   end
 
   module_function :pathDelay
 end
+beginPoint = [135000.0, 17000.0 ,8100.0]
+endPoint = [18224.586909535756,321.4852746658525,4012.536088514577]
+p Space_Base.pointDistance(beginPoint, endPoint)
+p Space_Base.pathDelay([beginPoint,endPoint],2)

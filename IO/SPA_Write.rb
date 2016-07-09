@@ -19,8 +19,8 @@ module SPA_Write
       #Windows环境路径
       @@logFile = File.new(File.expand_path("..")+'\\Log\\log'+time.year.to_s+time.month.to_s+time.day.to_s+".txt", "w+")
       @@pathFile = File.new(File.expand_path("..")+'\\Log\\path'+time.year.to_s+time.month.to_s+time.day.to_s+".txt", "w+")
-      @@signalFile = File.new(File.expand_path("..")+'\\Log\\singalPath'+time.year.to_s+time.month.to_s+time.day.to_s+".txt", "w+")
-      @@spaceFile = File.new(File.expand_path("..")+'\\Log\\spacePath'+time.year.to_s+time.month.to_s+time.day.to_s+".txt", "w+")
+      @@spacePathFile = File.new(File.expand_path("..")+'\\Log\\spacePath'+time.year.to_s+time.month.to_s+time.day.to_s+".txt", "w+")
+      @@signalPathFile = File.new(File.expand_path("..")+'\\Log\\signalPath'+time.year.to_s+time.month.to_s+time.day.to_s+".txt", "w+")
     else
       #OS X环境路径
       @@logFile = File.new(File.expand_path("..")+'//Log//log'+time.year.to_s+time.month.to_s+time.day.to_s+".txt", "w+")
@@ -86,4 +86,17 @@ module SPA_Write
   end
 
   module_function :ueWrite
+
+  #写入网元和终端直射距离
+  def ueDistance(ueArray,neArray)
+    distanceFile = File.new(File.expand_path("..")+'//Log//ueDistance'+".txt", "w+")
+    ueArray.each do |ue|
+      neArray.each do |ne|
+        ueDistance = Space_Base.pointDistance(ne.coordinate,ue.coordinate)
+        distanceFile.syswrite(ne.id.to_s+" "+ue.id.to_s+" "+ueDistance.to_s+"\n")
+      end
+    end
+  end
+
+  module_function :ueDistance
 end

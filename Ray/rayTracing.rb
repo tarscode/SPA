@@ -19,7 +19,8 @@ require File.join(File.expand_path(".."), '/Data/Data_Test')
 require 'benchmark'
 def rayTracing
   p "rayTracing"
-  ueData = Data_Test.ue(500)
+  #生成终端数据
+  ueData = Data_Test.ue(10)
   SPA_Write.ueWrite(ueData)
   #创建日志文件,OSX环境
   SPA_Write.createFile(2)
@@ -37,6 +38,8 @@ def rayTracing
   cubeArray = Data_Convert.planeToCube(planeArray)
   #创建路径数组
   pathArray = Array.new
+  #网元-终端距离文件写入
+  SPA_Write.ueDistance(neArray,ueArray)
   #总径计算
   ueArray.each do |ue|
     neArray.each do |ne|
@@ -45,6 +48,7 @@ def rayTracing
       #折射计算
       refractPath = Ray_Refract.refract(ne, ue, cubeArray, signal)
       #反射计算
+      #reflectPathArray = Array.new
       reflectPathArray = Ray_Reflect.reflect(ne, ue, cubeArray, signal)
       reflectPathArray.push(refractPath)
       #转换后删除空的数组
@@ -58,6 +62,9 @@ def rayTracing
   signalPathArray = Data_Convert.pathToSignalPath(pathArray)
 
   spacePathArray = Data_Convert.pathToSpacePath(pathArray)
+  #空间径合法性验证
+  spacePathArrayResult = Data_Test.spacePath(spacePathArray)
+  p "空间径合法性验证: #{spacePathArrayResult}"
   #写入信号路径
   SPA_Write.spacePathWrite(spacePathArray)
   #写入空间路径
@@ -65,5 +72,7 @@ def rayTracing
   return pathArray
 end
 
-p rayTracing
-p Benchmark.realtime
+p Benchmark.realtime{
+  rayTracing
+  p "运行时间:"
+}
