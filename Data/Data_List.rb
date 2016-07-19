@@ -19,11 +19,16 @@ module Data_List
     #材质磁导率
     #材质电导率
     #平面参数库数组
-    planeArgArray = [[0.0, 0.067, 0.000001256, 0.000001256, 0.00000000000885, 0.0000000000531]
+    planeArgArray = [
+        [0.0, 1.01, 0.000001256, 0.0003768, 0.00000000000885, 0.000000002655],
+        [0.0, 0.05, 0.000001256, 0.000001256, 0.00000000000885, 0.0000000000531],
+        [0.0, 0.0, 0.000001256, 0.000001256, 0.00000000000885, 0.0000000000177]
     ]
     #平面参数散列
-    planeArgHash = {1001 => planeArgArray[0]}
-    return planeArgArray[0]
+    planeArgHash = {1 => planeArgArray[0],
+                    2 => planeArgArray[1],
+                    3 => planeArgArray[2],}
+    return planeArgHash[planeId.to_i]
   end
 
   module_function :planeArgById

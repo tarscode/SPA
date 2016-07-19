@@ -31,7 +31,7 @@ module SPA_Read
       planeId = planeId+1 #编号自增
       plane.equation = lineArray[0, 4] #前四个表示为平面方程
       plane.point = [lineArray[4, 3], lineArray[7, 3], lineArray[10, 3], lineArray[13, 3]] #凸点坐标数组
-      #plane.material = lineArray[16]#平面材质
+      plane.material = lineArray[16]#平面材质
       #plane.type = lineArray[17]#平面类型
       planeArray.push(plane)
     end

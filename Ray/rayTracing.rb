@@ -17,11 +17,12 @@ require File.join(File.expand_path(".."), '/Entity/Path')
 require File.join(File.expand_path(".."), '/Data/Data_Review')
 require File.join(File.expand_path(".."), '/Data/Data_Test')
 require 'benchmark'
+
 def rayTracing
   p "rayTracing"
   #生成终端数据
-  ueData = Data_Test.ue(10)
-  SPA_Write.ueWrite(ueData)
+  #ueData = Data_Test.ue(10)
+  #SPA_Write.ueWrite(ueData)
   #创建日志文件,OSX环境
   SPA_Write.createFile(2)
   #数据文件名
@@ -39,12 +40,12 @@ def rayTracing
   #创建路径数组
   pathArray = Array.new
   #网元-终端距离文件写入
-  SPA_Write.ueDistance(neArray,ueArray)
+  SPA_Write.ueDistance(neArray, ueArray)
   #总径计算
   ueArray.each do |ue|
     neArray.each do |ne|
       #获取信号
-      signal = Data_List.signalById(ne.id,signalArray)
+      signal = Data_List.signalById(ne.id, signalArray)
       #折射计算
       refractPath = Ray_Refract.refract(ne, ue, cubeArray, signal)
       #反射计算
@@ -53,18 +54,22 @@ def rayTracing
       reflectPathArray.push(refractPath)
       #转换后删除空的数组
       reflectPathArray = Data_Convert.deleteNilPath(reflectPathArray)
+
       #不为空的路径加入路径数组
       if reflectPathArray.length !=0 then
         pathArray = pathArray + Data_Convert.convertPath(ne, ue, reflectPathArray)
       end
     end
   end
-  signalPathArray = Data_Convert.pathToSignalPath(pathArray)
+  #删除低于信号阀值的路径
+  effectPathArray = Data_Convert.effectPath(pathArray)
 
-  spacePathArray = Data_Convert.pathToSpacePath(pathArray)
+  signalPathArray = Data_Convert.pathToSignalPath(effectPathArray)
+
+  spacePathArray = Data_Convert.pathToSpacePath(effectPathArray)
   #空间径合法性验证
-  spacePathArrayResult = Data_Test.spacePath(spacePathArray)
-  p "空间径合法性验证: #{spacePathArrayResult}"
+  #spacePathArrayResult = Data_Test.spacePath(spacePathArray)
+  #p "空间径合法性验证: #{spacePathArrayResult}"
   #写入信号路径
   SPA_Write.spacePathWrite(spacePathArray)
   #写入空间路径
@@ -72,7 +77,7 @@ def rayTracing
   return pathArray
 end
 
-p Benchmark.realtime{
+p Benchmark.realtime {
   rayTracing
   p "运行时间:"
 }

@@ -32,6 +32,7 @@ module Ray_Refract
     end
     #遍历物体
     sortCubeArray.each do |cube|
+      p"cube #{cube.id}"
       planeHash = Hash.new
       pointHash = Hash.new
       #遍历物体的每个平面
