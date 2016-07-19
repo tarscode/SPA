@@ -15,12 +15,16 @@ module Data_Test
   def ue(num)
     ueArray = Array.new
     for i in 1..num
-      ue = Array.new
       prng = Random.new(i)
       id = 10000+i
-      x = prng.rand(0.0...41800.0)
-      y = prng.rand(0.0...12400.0)
-      z = prng.rand(0.0...7300.0)
+      #小场景
+      x = prng.rand(0.0...17800.0)
+      y = prng.rand(0.0...6400.0)
+      z = prng.rand(0.0...6300.0)
+      #大场景
+      #x = prng.rand(0.0...41800.0)
+      #y = prng.rand(0.0...12400.0)
+      #z = prng.rand(0.0...7300.0)
       ue =[id, x, y, z]
       ueArray.push(ue)
     end

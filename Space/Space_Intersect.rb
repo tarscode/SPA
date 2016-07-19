@@ -40,7 +40,7 @@ module Space_Intersect
       x, y, z = (x1-t*x2)/(1-t), (y1-t*y2)/(1-t), (z1-t*z2)/(1-t) #直线和平面相交点计算结果坐标
     end
     #SPA_Write.baseWrite("平面", plane.id.to_s)
-    #SPA_Write.baseWrite("平面方程合法性",equationValue.to_s)
+    SPA_Write.baseWrite("平面方程合法性",equationValue.to_s)
     #SPA_Write.baseWrite("t:",t.to_s)
     #SPA_Write.baseWrite("分子:",(a*x2+b*y2+c*z2+d).to_s)
     #SPA_Write.baseWrite("交点坐标", x.to_s+" "+y.to_s+" "+z.to_s)

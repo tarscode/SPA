@@ -25,7 +25,7 @@ def rayTracing
   #创建日志文件,OSX环境
   SPA_Write.createFile(2)
   #数据文件名
-  planeFile = File.expand_path("..")+"/Doc/Space.txt";
+  planeFile = File.expand_path("..")+"/Doc/Space_Small.txt";
   neFile = File.expand_path("..")+"/Doc/NetElement.txt";
   ueFile = File.expand_path("..")+"/Doc/UserEquipment.txt";
   singalFile = File.expand_path("..")+"/Doc/Signal.txt";

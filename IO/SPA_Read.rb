@@ -51,7 +51,7 @@ module SPA_Read
         lineArray[i] = lineArray[i].to_f
       end
       ue = NetElement.new
-      ue.id = lineArray[0]
+      ue.id = lineArray[0].to_i
       ue.coordinate = lineArray[1, 3]
       ueArray.push(ue)
     end
@@ -71,7 +71,7 @@ module SPA_Read
         lineArray[i] = lineArray[i].to_f
       end
       ne = NetElement.new
-      ne.id = lineArray[0]
+      ne.id = lineArray[0].to_i
       ne.coordinate = lineArray[1, 3]
       ne.signal = lineArray[4]
       ne.type = lineArray[5]
