@@ -12,6 +12,8 @@
 备注:
 =end
 include Math
+require 'complex'
+require 'cmath'
 module Space_Base
   #两点之间的距离
   def pointDistance(beginPoint, endPoint)
@@ -110,8 +112,44 @@ module Space_Base
   end
 
   module_function :pathDelay
+
+  #计算两条直线之间的夹角
+  def lineLineAngle(beginPoint1,endPoint1,beginPoint2,endPoint2)
+    x1,y1,z1 = beginPoint1
+    x2,y2,z2 = endPoint1
+    x3,y3,z3 = beginPoint2
+    x4,y4,z4 = endPoint2
+    a1,b1,c1 = x1-x2,y1-y2,z1-z2
+    a2,b2,c2 = x3-x4,y3-y4,z3-z4
+    n=Math.acos((a1*a2+b1*b2+c1*c2).abs/(Math.sqrt(a1**2+b1**2+c1**2)*Math.sqrt(a2**2+b2**2+c2**2)))
+    return n
+  end
+  module_function :lineLineAngle
+
+  #算积分
+  def integral (a,b,n=1000)
+    sum=0.0
+    dx=(b-a)/n.to_f
+    n.times do
+      a +=dx
+      sum=sum+(yield a)*dx
+    end
+    sum
+  end
+  module_function :integral
+
+  #点到直线距离
+  def distance(point, firstPoint,lastpoint )
+    x1,y1,z1 =point
+    x2, y2, z2 = firstPoint
+    x3, y3, z3 = lastpoint
+    sa =Math.sqrt((x1-x2)**2+(y2-y1)**2+(z2-z1)**2)
+    sb =Math.sqrt((x1-x3)**2+(y3-y1)**2+(z3-z1)**2)
+    sc =Math.sqrt((x3-x2)**2+(y3-y2)**2+(z3-z2)**2)
+    h=(sa+sb+sc)/2
+    s=Math.sqrt(h*(h-sa)*(h-sb)*(h-sc))
+    distance =2*s/sc
+    return distance
+  end
+  module_function :distance
 end
-beginPoint = [135000.0, 17000.0 ,8100.0]
-endPoint = [18224.586909535756,321.4852746658525,4012.536088514577]
-p Space_Base.pointDistance(beginPoint, endPoint)
-p Space_Base.pathDelay([beginPoint,endPoint],2)

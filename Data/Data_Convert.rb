@@ -14,6 +14,8 @@
 require File.join(File.expand_path(".."), '/Entity/Cube')
 require File.join(File.expand_path(".."), '/IO/SPA_Write')
 require File.join(File.expand_path(".."), '/Entity/Path')
+require 'complex'
+require 'cmath'
 module Data_Convert
   #平面数组转换成物体数组
   def planeToCube(planeArray)
@@ -75,10 +77,13 @@ module Data_Convert
 
   #删除空元素
   def deleteNilPath(pathArray)
+    if pathArray == nil then
+      return pathArray
+    end
     pathArray.each do |path|
-     if path == nil then
-       pathArray.delete(path)
-     end
+      if path == nil then
+        pathArray.delete(path)
+      end
     end
     return pathArray
   end
@@ -87,8 +92,9 @@ module Data_Convert
 
   #删除不满足信号强度的路径
   def effectPath(pathArray)
-    pathArray.delete_if{|path| path.loss<-200}
+    pathArray.delete_if { |path| (path.loss).real.nan? == true || path.loss.nan? == true || path.loss<-200 }
     return pathArray
   end
+
   module_function :effectPath
 end

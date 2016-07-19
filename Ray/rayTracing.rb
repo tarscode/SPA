@@ -13,6 +13,7 @@ require File.join(File.expand_path(".."), '/IO/SPA_Write')
 require File.join(File.expand_path(".."), '/Data/Data_Convert')
 require File.join(File.expand_path(".."), '/Ray/Ray_Refract')
 require File.join(File.expand_path(".."), '/Ray/Ray_Reflect')
+require File.join(File.expand_path(".."), '/Ray/Ray_Difract')
 require File.join(File.expand_path(".."), '/Entity/Path')
 require File.join(File.expand_path(".."), '/Data/Data_Review')
 require File.join(File.expand_path(".."), '/Data/Data_Test')
@@ -21,8 +22,8 @@ require 'benchmark'
 def rayTracing
   p "rayTracing"
   #生成终端数据
-  #ueData = Data_Test.ue(10)
-  #SPA_Write.ueWrite(ueData)
+  ueData = Data_Test.ue(1)
+  SPA_Write.ueWrite(ueData)
   #创建日志文件,OSX环境
   SPA_Write.createFile(2)
   #数据文件名
@@ -41,6 +42,7 @@ def rayTracing
   pathArray = Array.new
   #网元-终端距离文件写入
   SPA_Write.ueDistance(neArray, ueArray)
+  reflectPathArray = Array.new
   #总径计算
   ueArray.each do |ue|
     neArray.each do |ne|
@@ -48,15 +50,20 @@ def rayTracing
       signal = Data_List.signalById(ne.id, signalArray)
       #折射计算
       refractPath = Ray_Refract.refract(ne, ue, cubeArray, signal)
+      #绕射计算
+      #difractPath = Ray_Difract.difract(ne, ue, cubeArray, signal)
       #反射计算
-      #reflectPathArray = Array.new
       reflectPathArray = Ray_Reflect.reflect(ne, ue, cubeArray, signal)
       reflectPathArray.push(refractPath)
+      #if difractPath != nil && difractPath.length !=0 then
+      #  p "difractPath#{difractPath}"
+      #  reflectPathArray=reflectPathArray+difractPath
+      #end
       #转换后删除空的数组
       reflectPathArray = Data_Convert.deleteNilPath(reflectPathArray)
 
       #不为空的路径加入路径数组
-      if reflectPathArray.length !=0 then
+      if reflectPathArray != nil && reflectPathArray.length !=0 then
         pathArray = pathArray + Data_Convert.convertPath(ne, ue, reflectPathArray)
       end
     end

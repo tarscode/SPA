@@ -134,4 +134,97 @@ module Space_Intersect
 
   module_function :verifyEquation
 
+  #判定绕射点是否在劈上
+  def intersectDif(beginPoint, endPoint, wedge,difPoint)
+    x1, y1, z1 = beginPoint
+    x2, y2, z2 = endPoint #直线起点和终点坐标赋值
+    (u1, v1, w1), (u2, v2, w2) = wedge #劈坐标赋值
+    x, y, z= difPoint #绕射点坐标赋值
+    l1, m1, n1 = x2-x1, y2-y1, z2-z1 #计算方向向量
+    l2, m2, n2 = u2-u1, v2-v1, z2-z1
+    r = l1*l2+m1*m2+n1*n2
+    intersectPoint = [x1, y1, z1] #设置默认返回
+
+    #验证平面方程合法性
+    #equationValue = verifyEquation(plane)
+    #直线和平面垂直则返回直线起点坐标
+    if r == 0 then
+      return intersectPoint
+    end
+    #如果相交坐标在平面外，返回直线终点坐标
+    intersectPoint = [x2, y2, z2]
+
+    if x>u1&&x>u2 then
+      return intersectPoint
+    end
+
+    if x<u1&&x<u2 then
+      return intersectPoint
+    end
+
+    if y>v1&&y>v2 then
+      return intersectPoint
+    end
+
+    if y<v1&&y<v2 then
+      return intersectPoint
+    end
+
+    if z>w1&&z>w2 then
+      return intersectPoint
+    end
+
+    if z<w1&&z<w2 then
+      return intersectPoint
+    end
+    #相交点在直线两个端点外直接返回终点坐标
+    if x>x1&&x>x2 then
+      return intersectPoint
+    end
+
+    if x<x1&&x<x2 then
+      return intersectPoint
+    end
+
+    if y>y1&&y>y2 then
+      return intersectPoint
+    end
+    if y<y1&&y<y2 then
+      return intersectPoint
+    end
+
+    if z>z1&&z>z2 then
+      return intersectPoint
+    end
+
+    if z<z1&&z<z2 then
+      return intersectPoint
+    end
+
+    #通过全部合法性测试，相交点在线段内
+    intersectPoint = [x, y, z]
+    return intersectPoint
+  end
+  module_function :intersectDif
+
+  #判定绕射点合法性
+  def difRactPoint(beginpoint,endpoint,diFrPoint,cube)
+    # p "test3#{cube.plane}"
+    for i in 0..5
+      j=0
+      difRactPoint1=intersect(beginpoint,diFrPoint,cube.plane[i])
+      difRactPoint2=intersect(endpoint,diFrPoint,cube.plane[i])
+      if (difRactPoint1!=beginpoint&&difRactPoint1!=diFrPoint)||(difRactPoint2!=endpoint&&difRactPoint2!=diFrPoint)
+        j=j+1
+      else
+        j=j+0
+      end
+    end
+    if j==0
+      return 0
+    else
+      return  1
+    end
+  end
+  module_function :difRactPoint
 end
