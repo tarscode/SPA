@@ -53,5 +53,24 @@ module Data_Test
   end
 
   module_function :spacePath
+
+  def grid()
+    point1 = [200,1700,0]
+    point2 = [5200,6200,0]
+    dx = (point2[0]- point1[0])/10.0
+    dy = (point2[1]- point1[1])/10.0
+    z = 200.0
+    pointArray = Array.new
+    id =10000
+    for i in 0..9
+      for j in 0..9
+        id  =id +1
+        point = [id,point1[0]+dx*i,point1[1]+dy*j,z]
+        pointArray.push(point)
+      end
+    end
+    return pointArray
+  end
+  module_function :grid
 end
 

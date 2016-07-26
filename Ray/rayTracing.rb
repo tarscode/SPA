@@ -22,8 +22,12 @@ require 'benchmark'
 def rayTracing
   p "rayTracing"
   #生成终端数据
-  ueData = Data_Test.ue(1)
-  SPA_Write.ueWrite(ueData)
+  #ueData = Data_Test.ue(10)
+  #SPA_Write.ueWrite(ueData)
+  #创建网格
+  gridData = Data_Test.grid()
+  SPA_Write.ueWrite(gridData)
+  #SPA_Write.gridWrite(gridData)
   #创建日志文件,OSX环境
   SPA_Write.createFile(2)
   #数据文件名

@@ -99,4 +99,16 @@ module SPA_Write
   end
 
   module_function :ueDistance
+
+  def gridWrite(ueArray)
+    ueFile = File.new(File.expand_path("..")+'//Doc//UserEquipment'+".txt", "w+")
+    ueArray.each do |ue|
+      for i in 0..2
+        ueFile.syswrite(ue[i].to_s+" ")
+      end
+      ueFile.syswrite("\n")
+    end
+  end
+
+  module_function :gridWrite
 end

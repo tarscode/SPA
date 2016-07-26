@@ -94,7 +94,8 @@ module Space_Base
 
   #计算路径传播时延
   def pathDelay(path,n)
-    speed = 300000000000.0
+    #speed = 300000000000.0
+    speed = 299792458000.0
     len = 0.0
     for i in 0..n-2
       len = len + pointDistance(path[i],path[i+1])
