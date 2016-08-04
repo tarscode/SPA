@@ -10,6 +10,7 @@
 =end
 require File.join(File.expand_path(".."), '/IO/SPA_Read')
 require File.join(File.expand_path(".."), '/IO/SPA_Write')
+require File.join(File.expand_path(".."), '/IO/SPA_File')
 require File.join(File.expand_path(".."), '/Data/Data_Convert')
 require File.join(File.expand_path(".."), '/Ray/Ray_Refract')
 require File.join(File.expand_path(".."), '/Ray/Ray_Reflect')
@@ -18,15 +19,22 @@ require File.join(File.expand_path(".."), '/Entity/Path')
 require File.join(File.expand_path(".."), '/Data/Data_Review')
 require File.join(File.expand_path(".."), '/Data/Data_Test')
 require 'benchmark'
+require 'logger'
 
 def rayTracing
+  #创建日志文件
+  loggerFile = File.new(File.expand_path("..")+"//Log//logger.txt", "w+")
+  $logger = Logger.new(loggerFile)
+  $logger.level = Logger::INFO
+  #检测输入文件
+  SPA_File.inputFile
   p "rayTracing"
   #生成终端数据
-  #ueData = Data_Test.ue(10)
-  #SPA_Write.ueWrite(ueData)
+  ueData = Data_Test.ue(1)
+  SPA_Write.ueWrite(ueData)
   #创建网格
-  gridData = Data_Test.grid()
-  SPA_Write.ueWrite(gridData)
+  #gridData = Data_Test.grid()
+  #SPA_Write.ueWrite(gridData)
   #SPA_Write.gridWrite(gridData)
   #创建日志文件,OSX环境
   SPA_Write.createFile(2)
@@ -55,14 +63,14 @@ def rayTracing
       #折射计算
       refractPath = Ray_Refract.refract(ne, ue, cubeArray, signal)
       #绕射计算
-      #difractPath = Ray_Difract.difract(ne, ue, cubeArray, signal)
+      difractPath = Ray_Difract.difract(ne, ue, cubeArray, signal)
       #反射计算
       reflectPathArray = Ray_Reflect.reflect(ne, ue, cubeArray, signal)
       reflectPathArray.push(refractPath)
-      #if difractPath != nil && difractPath.length !=0 then
+      if difractPath != nil && difractPath.length !=0 then
       #  p "difractPath#{difractPath}"
-      #  reflectPathArray=reflectPathArray+difractPath
-      #end
+        reflectPathArray=reflectPathArray+difractPath
+      end
       #转换后删除空的数组
       reflectPathArray = Data_Convert.deleteNilPath(reflectPathArray)
 
