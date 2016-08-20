@@ -30,15 +30,15 @@ module Ray_Reflect
         pointResult = Space_Intersect.verifyPoint(mirrorPoint, endPoint, reflectPoint)
         if pointResult == 0 then
           p "Module: Ray_Reflect Method: reflect 未验证反射点 "+reflectPoint.to_s
-          if verifyReflectPlane(beginPoint, reflectPoint, cube ,plane) == true then
+          if verifyReflectPlane(beginPoint, reflectPoint, cube, plane) == true then
             p "Module: Ray_Reflect reflectPoint: #{reflectPoint}"
             reflectCubeArray = deleteCube(cube.id, cubeArray)
             reflectUe = UserEquipment.new
             reflectUe.coordinate = reflectPoint
             preRefractPath = Ray_Refract.refract(ne, reflectUe, reflectCubeArray, signal)
             preRefractSignal = preRefractPath[0]
-            inReflectAngle = Space_Base.linePlaneAngle(beginPoint,reflectPoint,plane.equation)
-            reflectSignalValue = Loss_Reflect.reflect(preRefractSignal,signal.frequency,inReflectAngle,plane)
+            inReflectAngle = Space_Base.linePlaneAngle(beginPoint, reflectPoint, plane.equation)
+            reflectSignalValue = Loss_Reflect.reflect(preRefractSignal, signal.frequency, inReflectAngle, plane)
             reflectSignal = Sign.new
             reflectSignal.id = signal.id
             reflectSignal.strength = reflectSignalValue
@@ -51,7 +51,7 @@ module Ray_Reflect
             reflectPointArray = preRefractPath[2]+nextRefractPath[2].drop(1)
             reflectPath = [reflectSignalValue, reflectDelay, reflectPointArray]
             reflectPathArray.push(reflectPath)
-            reflectCubeArray.insert(0,cube) #添加回反射物体
+            reflectCubeArray.insert(0, cube) #添加回反射物体
           end
         end
       end
@@ -62,8 +62,48 @@ module Ray_Reflect
 
   module_function :reflect
 
+  #计算多次反射
+  def multiReflect(ne, ue, cubeArray, signal)
+    beginPoint = ne.coordinate
+    endPoint = ue.coordinate
+    cubeArray.each do |cube1|
+      cube1.plane.each do |plane1|
+        mirrorPoint1 = Space_Base.mirrorPoint(beginPoint, plane1.equation) #求源点的镜像点
+        cubeArray.each do |cube2|
+          cube2.plane.each do |plane2|
+            mirrorPoint2 = Space_Base.mirrorPoint(mirrorPoint1, plane2.equation) #求源点的镜像点
+            reflectPoint2 = Space_Intersect.intersect(mirrorPoint2, endPoint, plane2)
+            pointResult2 = Space_Intersect.verifyPoint(mirrorPoint1, endPoint, reflectPoint2)
+            if pointResult2 == 0 then
+              if verifyReflectPlane(endPoint, reflectPoint2, cube2, plane2) == true then
+
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+
+
+  module_function :multiReflect
+
+  #计算镜像点
+  def mirrorPoint(ne, cubeArray)
+    beginPoint = ne.coordinate
+    mirrorPointArray = Array.new
+    cubeArray.each do |cube|
+      cube.plane.each do |plane|
+        mirrorPoint = Space_Base.mirrorPoint(beginPoint, plane.equation) #求源点的镜像点
+        mirrorPointArray.push(mirrorPoint)
+      end
+    end
+  end
+
+  module_function :mirrorPoint
+
   #判断反射面的有效性
-  def verifyReflectPlane(beginPoint, reflectPoint, cube ,reflectPlane)
+  def verifyReflectPlane(beginPoint, reflectPoint, cube, reflectPlane)
     p "Module: Ray_Reflect Method: verifyReflectPlane 物体平面数量 "+cube.plane.length.to_s
     p "Module: Ray_Reflect Method: verifyReflectPlane"
     cube.plane.each do |plane|

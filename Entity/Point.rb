@@ -8,7 +8,14 @@
 =end
 class Point
   attr_accessor :coordinate#坐标
-  attr_accessor :delay#时延
-  attr_accessor :signal#信号对象
-  attr_accessor :type #交点类型
+  attr_accessor :father#父节点
+  attr_accessor :child#子节点数组
+  attr_accessor :plane#镜像点的面
+  attr_accessor :cube#镜像点的物体
+  def initialize(initCoordinate,initFather,initPlane,initCube)
+    @coordinate = initCoordinate
+    @father = initFather
+    @plane = initPlane
+    @cube = initCube
+  end
 end

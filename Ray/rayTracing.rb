@@ -30,7 +30,7 @@ def rayTracing
   SPA_File.inputFile
   p "rayTracing"
   #生成终端数据
-  ueData = Data_Test.ue(1)
+  ueData = Data_Test.ue(10)
   SPA_Write.ueWrite(ueData)
   #创建网格
   #gridData = Data_Test.grid()
