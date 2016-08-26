@@ -17,22 +17,26 @@ require File.join(File.expand_path(".."), '/Entity/Cube')
 require File.join(File.expand_path(".."), '/Loss/Loss_Reflect')
 require File.join(File.expand_path(".."), '/Entity/NetElement')
 require File.join(File.expand_path(".."), '/Entity/UserEquipment')
+require File.join(File.expand_path(".."), '/Data/Data_Init')
 module Ray_Reflect
   def reflect(ne, ue, cubeArray, signal)
     beginPoint = ne.coordinate
     endPoint = ue.coordinate
-    p "Module: Ray_Reflect Method: reflect"
     reflectPathArray = Array.new #反射路径数组
     cubeArray.each do |cube|
+      #$logger.info("Module: Ray_Reflect cube:"+cube.id.to_s)
       cube.plane.each do |plane|
+        #$logger.info("Module: Ray_Reflect plane:"+plane.id.to_s+"cube:"+cube.id.to_s)
         mirrorPoint = Space_Base.mirrorPoint(beginPoint, plane.equation) #求源点的镜像点
         reflectPoint = Space_Intersect.intersect(mirrorPoint, endPoint, plane)
         pointResult = Space_Intersect.verifyPoint(mirrorPoint, endPoint, reflectPoint)
+        #$logger.info("Module: Ray_Reflect"+" planeId "+plane.id.to_s+" mirrorPoint: "+mirrorPoint.to_s+" reflectPoint: "+reflectPoint.to_s+" pointResult: "+pointResult.to_s)
         if pointResult == 0 then
-          p "Module: Ray_Reflect Method: reflect 未验证反射点 "+reflectPoint.to_s
+          #$logger.info("Module: Ray_Reflect plane1:"+plane.to_s)
           if verifyReflectPlane(beginPoint, reflectPoint, cube, plane) == true then
-            p "Module: Ray_Reflect reflectPoint: #{reflectPoint}"
-            reflectCubeArray = deleteCube(cube.id, cubeArray)
+            #$logger.info("Module: Ray_Reflect plane2:"+plane.to_s)
+            tempCubeArray = cubeArray.clone
+            reflectCubeArray = deleteCube(cube.id, tempCubeArray)
             reflectUe = UserEquipment.new
             reflectUe.coordinate = reflectPoint
             preRefractPath = Ray_Refract.refract(ne, reflectUe, reflectCubeArray, signal)
@@ -50,8 +54,9 @@ module Ray_Reflect
             reflectSignalValue = nextRefractPath[0]
             reflectPointArray = preRefractPath[2]+nextRefractPath[2].drop(1)
             reflectPath = [reflectSignalValue, reflectDelay, reflectPointArray]
+            $logger.info("reflectPath:"+reflectPath.to_s)
             reflectPathArray.push(reflectPath)
-            reflectCubeArray.insert(0, cube) #添加回反射物体
+            #reflectCubeArray.insert(0, cube) #添加回反射物体
           end
         end
       end
@@ -63,55 +68,35 @@ module Ray_Reflect
   module_function :reflect
 
   #计算多次反射
-  def multiReflect(ne, ue, cubeArray, signal)
-    beginPoint = ne.coordinate
+  def multiReflect(ue, cubeArray, signal, pointArray)
     endPoint = ue.coordinate
-    cubeArray.each do |cube1|
-      cube1.plane.each do |plane1|
-        mirrorPoint1 = Space_Base.mirrorPoint(beginPoint, plane1.equation) #求源点的镜像点
-        cubeArray.each do |cube2|
-          cube2.plane.each do |plane2|
-            mirrorPoint2 = Space_Base.mirrorPoint(mirrorPoint1, plane2.equation) #求源点的镜像点
-            reflectPoint2 = Space_Intersect.intersect(mirrorPoint2, endPoint, plane2)
-            pointResult2 = Space_Intersect.verifyPoint(mirrorPoint1, endPoint, reflectPoint2)
-            if pointResult2 == 0 then
-              if verifyReflectPlane(endPoint, reflectPoint2, cube2, plane2) == true then
-
-              end
-            end
-          end
+    multiReflectPathArray = Array.new
+    pointArray.each do |levelThreePoint|
+      reflectTwoPlane = $planeHash[levelThreePoint.planeId]
+      reflectPointTwo = Space_Intersect.intersect(levelThreePoint.coordinate,endPoint,reflectTwoPlane) #求二次反射点
+      pointTwoResult = Space_Intersect.verifyPoint(levelThreePoint.coordinate,endPoint,reflectPointTwo)
+      if pointTwoResult == 0 then
+        levelTwoPoint = $pointHash[levelThreePoint.fatherId]
+        reflectOnePlane = $planeHash[levelTwoPoint.planeId]
+        reflectPointOne = Space_Intersect.intersect(levelTwoPoint.coordinate,reflectPointTwo,reflectOnePlane)
+        pointOneResult = Space_Intersect.verifyPoint(levelTwoPoint.coordinate,reflectPointTwo,reflectPointOne)
+        if pointOneResult == 0 then
+          beginPoint = $pointHash[levelTwoPoint.fatherId]
+          multiReflectPath = [beginPoint.coordinate,reflectPointOne,reflectPointTwo,endPoint]
+          multiReflectPathArray.push(multiReflectPath)
         end
       end
     end
+    return multiReflectPathArray
   end
-
 
   module_function :multiReflect
-
-  #计算镜像点
-  def mirrorPoint(ne, cubeArray)
-    beginPoint = ne.coordinate
-    mirrorPointArray = Array.new
-    cubeArray.each do |cube|
-      cube.plane.each do |plane|
-        mirrorPoint = Space_Base.mirrorPoint(beginPoint, plane.equation) #求源点的镜像点
-        mirrorPointArray.push(mirrorPoint)
-      end
-    end
-  end
-
-  module_function :mirrorPoint
-
   #判断反射面的有效性
   def verifyReflectPlane(beginPoint, reflectPoint, cube, reflectPlane)
-    p "Module: Ray_Reflect Method: verifyReflectPlane 物体平面数量 "+cube.plane.length.to_s
-    p "Module: Ray_Reflect Method: verifyReflectPlane"
     cube.plane.each do |plane|
-      p "Module: Ray_Reflect Method: verifyReflectPlane "+plane.id.to_s
       if plane == reflectPlane then
         next
       end
-      p "Module: Ray_Reflect Method: verifyReflectPlane "+plane.id.to_s
       interPoint = Space_Intersect.intersect(beginPoint, reflectPoint, plane)
       pointResult = Space_Intersect.verifyPoint(beginPoint, reflectPoint, interPoint)
       if pointResult == 0 then
@@ -125,14 +110,12 @@ module Ray_Reflect
 
   #删除当前的物体
   def deleteCube(id, cubeArray)
-    p "Module: Ray_Reflect Method: deleteCube"+cubeArray.length.to_s
     cubeArray.each do |cube|
       if cube.id == id
         cubeArray.delete(cube)
         break
       end
     end
-    p "Module: Ray_Reflect Method: deleteCube after "+cubeArray.length.to_s
     return cubeArray
   end
 

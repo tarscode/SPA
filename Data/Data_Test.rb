@@ -55,8 +55,8 @@ module Data_Test
   module_function :spacePath
 
   def grid()
-    point1 = [200,1700,0]
-    point2 = [5200,6200,0]
+    point1 = [200, 1700, 0]
+    point2 = [5200, 6200, 0]
     dx = (point2[0]- point1[0])/10.0
     dy = (point2[1]- point1[1])/10.0
     z = 200.0
@@ -64,13 +64,85 @@ module Data_Test
     id =10000
     for i in 0..9
       for j in 0..9
-        id  =id +1
-        point = [id,point1[0]+dx*i,point1[1]+dy*j,z]
+        id =id +1
+        point = [id, point1[0]+dx*i, point1[1]+dy*j, z]
         pointArray.push(point)
       end
     end
     return pointArray
   end
+
   module_function :grid
+
+  def cubeTest(cubeArray)
+    $logger.info("Module:Data_Test cubeSize:"+cubeArray.length.to_s)
+    cubeArray.each do |cube|
+      $logger.info("Module:Data_Test cube:"+cube.id.to_s)
+    end
+  end
+
+  module_function :cubeTest
+
+  def cubeCenter(cube)
+    size = cube.plane.length
+    xx, yy, zz =0, 0, 0
+    for i in 0..size-1
+      pointArray = cube.plane[i].point
+      x, y, z = 0, 0, 0
+      pointArray.each do |point|
+        x=x+point[0]
+        y=y+point[1]
+        z=z+point[2]
+      end
+      xx = xx+x/4.0
+      yy =yy+ y/4.0
+      zz= zz+z/4.0
+    end
+    xx = xx*1.0/size
+    yy = yy*1.0/size
+    zz = zz*1.0/size
+    centerPoint = [xx, yy, zz]
+    return centerPoint
+  end
+
+  module_function :cubeCenter
+
+  def cubeQueryByPoint(searchPoint, cubeArray)
+    idArray = Array.new
+    cubeArray.each do |cube|
+      planeArray = cube.plane
+      pointArray = Array.new
+      planeArray.each do |plane|
+        pointArray = pointArray+plane.point
+      end
+      pointArray.each do |point|
+        x = point[0]-searchPoint[0]
+        y = point[1]-searchPoint[1]
+        z = point[2]-searchPoint[2]
+        if x>-0.1&&x<0.1&&y>-0.1&&y<0.1&&z>-0.1&&z<0.1 then
+          idArray.push(cube.id)
+          break
+        end
+      end
+    end
+    return idArray
+  end
+
+  module_function :cubeQueryByPoint
+
+  def cubeQueryByPlane(planeId, cubeArray)
+    planeArr = Array.new
+    cubeArray.each do |cube|
+      planeArray = cube.plane
+      planeArray.each do |plane|
+        if plane.id == planeId then
+          planeArr.push(cube.id)
+        end
+      end
+    end
+    return planeArr
+  end
+
+  module_function :cubeQueryByPlane
 end
 

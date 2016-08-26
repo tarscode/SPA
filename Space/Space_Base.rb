@@ -11,6 +11,9 @@
 时间:下午5:03
 备注:
 =end
+require File.join(File.expand_path(".."), '/Entity/Cube')
+require File.join(File.expand_path(".."), '/Entity/Plane')
+require File.join(File.expand_path(".."), '/Entity/Point')
 include Math
 require 'complex'
 require 'cmath'
@@ -153,4 +156,19 @@ module Space_Base
     return distance
   end
   module_function :distance
+
+  #计算镜像点数组
+  def mirrorPointArray(point, cubeArray)
+    mirrorPointArray = Array.new
+    cubeArray.each do |cube|
+      cube.plane.each do |plane|
+        coordinate = mirrorPoint(point.coordinate, plane.equation) #求源点的镜像点
+        mirrorPoint = Point.new(coordinate, point.id, plane.id, cube.id)
+        mirrorPointArray.push(mirrorPoint)
+      end
+    end
+    return mirrorPointArray
+  end
+
+  module_function :mirrorPointArray
 end

@@ -21,26 +21,45 @@ require File.join(File.expand_path(".."), '/Ray/Ray_Difract')
 require File.join(File.expand_path(".."), '/Entity/Path')
 require File.join(File.expand_path(".."), '/Data/Data_Review')
 require File.join(File.expand_path(".."), '/Data/Data_Test')
-require File.join(File.expand_path(".."), '/Ray/Ray_Init')
+require File.join(File.expand_path(".."), '/Data/Data_Init')
 require File.join(File.expand_path(".."), '/Entity/Point')
 require 'benchmark'
 require 'logger'
 
 def rayTracing
+  #创建日志文件,OSX环境
+  SPA_Write.createFile(2)
   #创建日志文件
   loggerFile = File.new(File.expand_path("..")+"//Log//logger.txt", "w+")
   $logger = Logger.new(loggerFile)
   #数据文件名
-  planeFile = File.expand_path("..")+"/Doc/Space_Small.txt";
+  planeFile = File.expand_path("..")+"/Doc/Space_Least.txt";
+  planeFile2 = File.expand_path("..")+"/Doc/Space_Least2.txt";
   neFile = File.expand_path("..")+"/Doc/NetElement.txt";
+  pointFile = File.expand_path("..")+"/Doc/PointTree.txt";
+  ueFile = File.expand_path("..")+"/Doc/UserEquipment.txt";
   #获取数据
-  planeArray = SPA_Read.plane(planeFile) #平面数组
+  planeCubeArray = SPA_Read.planeCube(planeFile2) #平面数组
+  planeArray = planeCubeArray[0]
+  cubeArray = planeCubeArray[1]
   neArray = SPA_Read.ne(neFile) #网元数组
-  #平面数据转换成物体数据
-  cubeArray = Data_Convert.planeToCube(planeArray)
+  ueArray = SPA_Read.ue(ueFile) #终端数组
+  #初始化
+  Data_Init.planeInit(planeArray)
+  Data_Init.cubeInit(cubeArray)
+  #数据测试
 
-  ne = neArray[0]
-  p Ray_Init.initPointTree(ne,cubeArray)
+  #写入源点
+  pointArray = Data_Init.initPointTree(neArray,cubeArray)
+  SPA_Write.treeWrite(pointArray)
+  #读取源点
+  pointArray = SPA_Read.point(pointFile)
+  Data_Init.pointInit(pointArray)
+  p $pointHash[101]
+  pointArray = Data_Convert.levelThreePointArray(pointArray)
+  spacePathArray = Ray_Reflect.multiReflect(ueArray[0],nil,nil,pointArray)
+  #写入信号路径
+  SPA_Write.spacePathWrite(spacePathArray)
 end
 
 p Benchmark.realtime {

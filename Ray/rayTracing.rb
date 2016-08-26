@@ -30,8 +30,8 @@ def rayTracing
   SPA_File.inputFile
   p "rayTracing"
   #生成终端数据
-  ueData = Data_Test.ue(10)
-  SPA_Write.ueWrite(ueData)
+  #ueData = Data_Test.ue(1)
+  #SPA_Write.ueWrite(ueData)
   #创建网格
   #gridData = Data_Test.grid()
   #SPA_Write.ueWrite(gridData)
@@ -39,22 +39,38 @@ def rayTracing
   #创建日志文件,OSX环境
   SPA_Write.createFile(2)
   #数据文件名
-  planeFile = File.expand_path("..")+"/Doc/Space_Small.txt";
+  #planeFile = File.expand_path("..")+"/Doc/Space_Small.txt";
+  planeFile = File.expand_path("..")+"/Doc/Space_Curve.txt";
   neFile = File.expand_path("..")+"/Doc/NetElement.txt";
   ueFile = File.expand_path("..")+"/Doc/UserEquipment.txt";
   singalFile = File.expand_path("..")+"/Doc/Signal.txt";
   #获取数据
-  planeArray = SPA_Read.plane(planeFile) #平面数组
+  planeCubeArray = SPA_Read.planeCube(planeFile) #平面数组
+  planeArray = planeCubeArray[0]
+  cubeArray = planeCubeArray[1]
   neArray = SPA_Read.ne(neFile) #网元数组
   ueArray = SPA_Read.ue(ueFile) #终端数组
   signalArray = SPA_Read.signal(singalFile) #信号数组
-  #平面数据转换成物体数据
-  cubeArray = Data_Convert.planeToCube(planeArray)
   #创建路径数组
   pathArray = Array.new
   #网元-终端距离文件写入
   SPA_Write.ueDistance(neArray, ueArray)
   reflectPathArray = Array.new
+  #初始化
+  Data_Init.planeInit(planeArray)
+  Data_Init.cubeInit(cubeArray)
+  #数据输出
+  SPA_Write.cubeWrite(cubeArray) #物体及平面数据文件
+  #数据测试
+  #Data_Test.cubeTest(cubeArray)
+  #cubeId = Data_Test.cubeQueryByPlane(10001,cubeArray)[0]
+  cubeId = Data_Test.cubeQueryByPoint([10400,6200,6200],cubeArray)[0]
+  cube = $cubeHash[cubeId]
+  $logger.info("Main: searchCube:"+cubeId.to_s)
+  $logger.info("Main: "+" cubeEntity: "+cube.plane.to_s)
+  $logger.info("Main: "+" cubeId: "+cubeId.to_s)
+  $logger.info("Main: "+" cubeCenterPoint: "+Data_Test.cubeCenter(cube).to_s)
+
   #总径计算
   ueArray.each do |ue|
     neArray.each do |ne|
@@ -63,14 +79,14 @@ def rayTracing
       #折射计算
       refractPath = Ray_Refract.refract(ne, ue, cubeArray, signal)
       #绕射计算
-      difractPath = Ray_Difract.difract(ne, ue, cubeArray, signal)
+      #difractPath = Ray_Difract.difract(ne, ue, cubeArray, signal)
       #反射计算
       reflectPathArray = Ray_Reflect.reflect(ne, ue, cubeArray, signal)
       reflectPathArray.push(refractPath)
-      if difractPath != nil && difractPath.length !=0 then
-      #  p "difractPath#{difractPath}"
-        reflectPathArray=reflectPathArray+difractPath
-      end
+      #if difractPath != nil && difractPath.length !=0 then
+      #p "difractPath#{difractPath}"
+      #  reflectPathArray=reflectPathArray+difractPath
+      #end
       #转换后删除空的数组
       reflectPathArray = Data_Convert.deleteNilPath(reflectPathArray)
 
@@ -81,8 +97,9 @@ def rayTracing
     end
   end
   #删除低于信号阀值的路径
-  effectPathArray = Data_Convert.effectPath(pathArray)
-
+  #effectPathArray = Data_Convert.effectPath(pathArray)
+  #包含不满足信号强度的全部路径
+  effectPathArray = pathArray
   signalPathArray = Data_Convert.pathToSignalPath(effectPathArray)
 
   spacePathArray = Data_Convert.pathToSpacePath(effectPathArray)

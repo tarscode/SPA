@@ -16,7 +16,7 @@ module Space_Intersect
   def intersect(beginPoint, endPoint, plane)
     x1, y1, z1 = beginPoint
     x2, y2, z2 = endPoint #直线起点和终点坐标赋值
-    (u1, v1, w1), (u2, v2, w2), (u3, v3, w3), (u4, v4, w4) = plane.point #平面凸点坐标赋值
+    (u1, v1, w1), (u2, v2, w2), (u3, v3, w3), (u4, v4, w4) = plane.point[0], plane.point[1], plane.point[2], plane.point[3] #平面凸点坐标赋值
     a, b, c, d = plane.equation #平面方程系数赋值
     l, m, n = x2-x1, y2-y1, z2-z1 #计算方向向量
     r = l*a+m*b+n*c
@@ -24,6 +24,9 @@ module Space_Intersect
 
     #验证平面方程合法性
     equationValue = verifyEquation(plane)
+    if equationValue==1 then
+      $logger.info("Module: Space_Intersect "+" 平面方程合法性: "+equationValue.to_s+"planeId:"+plane.id.to_s)
+    end
     #直线和平面垂直则返回直线起点坐标
     if r == 0 then
       return intersectPoint
@@ -32,44 +35,46 @@ module Space_Intersect
     t1 = (a*x1+b*y1+c*z1+d)*1.0
     t2 = (a*x2+b*y2+c*z2+d)
     if t1 == 0 then
-       x,y,z = x1,y1,z1 #起点在平面上
+      x, y, z = x1, y1, z1 #起点在平面上
     elsif t2 == 0 then
-      x,y,z = x2,y2,z2 #终点在平面上
+      x, y, z = x2, y2, z2 #终点在平面上
     else
       t = t1/t2 #系数t计算,注意乘以1.0,否则取整数
       x, y, z = (x1-t*x2)/(1-t), (y1-t*y2)/(1-t), (z1-t*z2)/(1-t) #直线和平面相交点计算结果坐标
     end
-    #SPA_Write.baseWrite("平面", plane.id.to_s)
-    #SPA_Write.baseWrite("平面方程合法性",equationValue.to_s)
-    #SPA_Write.baseWrite("t:",t.to_s)
-    #SPA_Write.baseWrite("分子:",(a*x2+b*y2+c*z2+d).to_s)
-    #SPA_Write.baseWrite("交点坐标", x.to_s+" "+y.to_s+" "+z.to_s)
+
     #如果相交坐标在平面外，返回直线终点坐标
     intersectPoint = [x2, y2, z2]
-
-    if x>u1&&x>u2&&x>u3&&x>u4 then
+    #平面相交测试
+    if interPoint([x, y, z], plane.point)==false then
       return intersectPoint
     end
 
-    if x<u1&&x<u2&&x<u3&&x<u4 then
-      return intersectPoint
-    end
+    #value = 0.001 #误差值
+    #if x-u1>value&&x-u2>value&&x-u3>value&&x-u4>value then
+    #  return intersectPoint
+    #end
 
-    if y>v1&&y>v2&&y>v3&&y>v4 then
-      return intersectPoint
-    end
+    #if x-u1<-value&&x-u2<-value&&x-u3<-value&&x-u4<-value then
+    #  return intersectPoint
+    #end
 
-    if y<v1&&y<v2&&y<v3&&y<v4 then
-      return intersectPoint
-    end
+    #if y-v1>value&&y-v2>value&&y-v3>value&&y-v4>value then
+    #  return intersectPoint
+    #end
 
-    if z>w1&&z>w2&&z>w3&&z>w4 then
-      return intersectPoint
-    end
+    #if y-v1<-value&&y-v2<-value&&y-v3<-value&&y-v4<-value then
+    #  return intersectPoint
+    #end
 
-    if z<w1&&z<w2&&z<w3&&z<w4 then
-      return intersectPoint
-    end
+    #if z-w1>value&&z-w2>value&&z-w3>value&&z-w4>value then
+    #  return intersectPoint
+    #end
+
+    #if z-w1<-value&&z-w2<-value&&z-w3<-value&&z-w4<-value then
+    #  return intersectPoint
+    #end
+
     #相交点在直线两个端点外直接返回终点坐标
     if x>x1&&x>x2 then
       return intersectPoint
@@ -99,7 +104,36 @@ module Space_Intersect
     return intersectPoint
   end
 
+
   module_function :intersect
+
+  #判断交点是否在平面内部
+  def interPoint(reflectPoint, pointArray)
+    value = 0.001
+    x, y, z = reflectPoint
+    xArray = Array.new
+    yArray = Array.new
+    zArray = Array.new
+    pointArray.each do |point|
+      xArray.push(point[0])
+      yArray.push(point[1])
+      zArray.push(point[2])
+    end
+    xMax = xArray.max
+    xMin = xArray.min
+    yMax = yArray.max
+    yMin = yArray.min
+    zMax = zArray.max
+    zMin = zArray.min
+
+    if x-xMax>value || x-xMin<-value || y-yMax>value || y-yMin<-value || z-zMax>value || z-zMin<-value then
+      return false
+    else
+      return true
+    end
+  end
+
+  module_function :interPoint
 
   #验证线面交点合法性
   def verifyPoint(beginPoint, endPoint, interPoint)
@@ -135,7 +169,7 @@ module Space_Intersect
   module_function :verifyEquation
 
   #判定绕射点是否在劈上
-  def intersectDif(beginPoint, endPoint, wedge,difPoint)
+  def intersectDif(beginPoint, endPoint, wedge, difPoint)
     x1, y1, z1 = beginPoint
     x2, y2, z2 = endPoint #直线起点和终点坐标赋值
     (u1, v1, w1), (u2, v2, w2) = wedge #劈坐标赋值
@@ -205,15 +239,16 @@ module Space_Intersect
     intersectPoint = [x, y, z]
     return intersectPoint
   end
+
   module_function :intersectDif
 
   #判定绕射点合法性
-  def difRactPoint(beginpoint,endpoint,diFrPoint,cube)
+  def difRactPoint(beginpoint, endpoint, diFrPoint, cube)
     # p "test3#{cube.plane}"
     for i in 0..5
       j=0
-      difRactPoint1=intersect(beginpoint,diFrPoint,cube.plane[i])
-      difRactPoint2=intersect(endpoint,diFrPoint,cube.plane[i])
+      difRactPoint1=intersect(beginpoint, diFrPoint, cube.plane[i])
+      difRactPoint2=intersect(endpoint, diFrPoint, cube.plane[i])
       if (difRactPoint1!=beginpoint&&difRactPoint1!=diFrPoint)||(difRactPoint2!=endpoint&&difRactPoint2!=diFrPoint)
         j=j+1
       else
@@ -223,8 +258,9 @@ module Space_Intersect
     if j==0
       return 0
     else
-      return  1
+      return 1
     end
   end
+
   module_function :difRactPoint
 end

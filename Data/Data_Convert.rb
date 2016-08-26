@@ -97,4 +97,17 @@ module Data_Convert
   end
 
   module_function :effectPath
+
+  #保留级数为3的源点
+  def levelThreePointArray(pointArray)
+    tmpPointArray = Array.new
+    pointArray.each do |point|
+      if point.level == 3 then
+        tmpPointArray.push(point)
+      end
+    end
+    return tmpPointArray
+  end
+
+  module_function :levelThreePointArray
 end

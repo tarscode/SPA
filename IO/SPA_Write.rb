@@ -88,11 +88,11 @@ module SPA_Write
   module_function :ueWrite
 
   #写入网元和终端直射距离
-  def ueDistance(ueArray,neArray)
+  def ueDistance(ueArray, neArray)
     distanceFile = File.new(File.expand_path("..")+'//Log//ueDistance'+".txt", "w+")
     ueArray.each do |ue|
       neArray.each do |ne|
-        ueDistance = Space_Base.pointDistance(ne.coordinate,ue.coordinate)
+        ueDistance = Space_Base.pointDistance(ne.coordinate, ue.coordinate)
         distanceFile.syswrite(ne.id.to_s+" "+ue.id.to_s+" "+ueDistance.to_s+"\n")
       end
     end
@@ -100,6 +100,7 @@ module SPA_Write
 
   module_function :ueDistance
 
+  #生成网格数据
   def gridWrite(ueArray)
     ueFile = File.new(File.expand_path("..")+'//Doc//UserEquipment'+".txt", "w+")
     ueArray.each do |ue|
@@ -111,4 +112,33 @@ module SPA_Write
   end
 
   module_function :gridWrite
+
+  #输出虚拟源树数据
+  def treeWrite(pointArray)
+    treeFile = File.new(File.expand_path("..")+'//Doc//PointTree'+".txt", "w+")
+    pointArray.each do |point|
+      treeFile.syswrite(point.id.to_s+' ')
+      treeFile.syswrite(point.coordinate[0].to_s+' '+point.coordinate[1].to_s+' '+point.coordinate[2].to_s+' ')
+      treeFile.syswrite(point.fatherId.to_s+' ')
+      treeFile.syswrite(point.level.to_s+' ')
+      treeFile.syswrite(point.planeId.to_s+' ')
+      treeFile.syswrite(point.cubeId.to_s+' ')
+      treeFile.syswrite("\n")
+    end
+  end
+  module_function :treeWrite
+
+  #输出物体及其平面数据
+  def cubeWrite(cubeArray)
+    cubeFile = File.new(File.expand_path("..")+'//Doc//cubeArray'+".txt", "w+")
+    cubeArray.each do |cube|
+      cubeFile.syswrite('cubeId:'+' '+cube.id.to_s+' '+cube.plane.length.to_s+"\n" )
+      planeArray = cube.plane
+      planeArray.each do |plane|
+        cubeFile.syswrite('planeId:'+' '+plane.id.to_s+"\n" )
+        cubeFile.syswrite(plane.equation.to_s+' '+plane.point.to_s+"\n" )
+      end
+    end
+  end
+  module_function :cubeWrite
 end
