@@ -41,14 +41,15 @@ def rayTracing
   planeFile = File.expand_path("..")+"/Doc/Space_Curve.txt";
   neFile = File.expand_path("..")+"/Doc/NetElement.txt";
   ueFile = File.expand_path("..")+"/Doc/UserEquipment.txt";
-  singalFile = File.expand_path("..")+"/Doc/Signal.txt";
+  signalFile = File.expand_path("..")+"/Doc/Signal.txt";
+  pointFile = File.expand_path("..")+"/Doc/PointTree.txt";
   #获取数据
   planeCubeArray = SPA_Read.planeCube(planeFile) #平面数组
   planeArray = planeCubeArray[0]
   cubeArray = planeCubeArray[1]
   neArray = SPA_Read.ne(neFile) #网元数组
   ueArray = SPA_Read.ue(ueFile) #终端数组
-  signalArray = SPA_Read.signal(singalFile) #信号数组
+  signalArray = SPA_Read.signal(signalFile) #信号数组
   #创建路径数组
   pathArray = Array.new
   #网元-终端距离文件写入
@@ -58,6 +59,7 @@ def rayTracing
   Data_Init.planeInit(planeArray)
   Data_Init.cubeInit(cubeArray)
   Data_Init.ueInit(ueArray)
+  Data_Init.signalInit(signalArray)
   #数据输出
   SPA_Write.cubeWrite(cubeArray) #物体及平面数据文件
   #数据测试
@@ -70,6 +72,15 @@ def rayTracing
   $logger.info("Main: "+" cubeId: "+cubeId.to_s)
   $logger.info("Main: "+" cubeCenterPoint: "+Data_Test.cubeCenter(cube).to_s)
 
+  #写入源点
+  #pointArray = Data_Init.initPointTree(neArray,cubeArray)
+  #SPA_Write.treeWrite(pointArray)
+
+  #读取源点
+  pointArray = SPA_Read.point(pointFile)
+  levelPointThreeArray = Data_Convert.levelThreePointArray(pointArray)
+  Data_Init.pointInit(pointArray)
+
   #总径计算
   ueArray.each do |ue|
     neArray.each do |ne|
@@ -81,6 +92,7 @@ def rayTracing
       #difractPath = Ray_Difract.difract(ne, ue, cubeArray, signal)
       #反射计算
       reflectPathArray = Ray_Reflect.reflect(ne, ue, cubeArray, signal)
+      p "reflectPathArray"
       reflectPathArray.push(refractPath)
       #if difractPath != nil && difractPath.length !=0 then
       #p "difractPath#{difractPath}"
@@ -94,6 +106,8 @@ def rayTracing
         pathArray = pathArray + Data_Convert.convertPath(ne, ue, reflectPathArray)
       end
     end
+    multiReflectPathArray = Ray_Reflect.multiReflect(ue,cubeArray,levelPointThreeArray)
+    pathArray = pathArray + multiReflectPathArray
   end
 
 

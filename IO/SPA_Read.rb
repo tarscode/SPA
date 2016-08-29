@@ -138,7 +138,7 @@ module SPA_Read
         lineArray[i] = lineArray[i].to_f
       end
       signal = Sign.new
-      signal.id = lineArray[0]
+      signal.id = lineArray[0].to_s.to_i
       signal.strength= lineArray[1]
       signal.frequency = lineArray[2]
       signal.data= lineArray[3]

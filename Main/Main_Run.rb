@@ -62,7 +62,8 @@ def mainRun
   Data_Init.pointInit(pointArray)
   p $pointHash[101]
   pointArray = Data_Convert.levelThreePointArray(pointArray)
-  spacePathArray = Ray_Reflect.multiReflect(ueArray[0],nil,nil,pointArray)
+  multiReflectPathArray = Ray_Reflect.multiReflect(ueArray[0],nil,nil,pointArray)
+  spacePathArray = Data_Convert.pathToSpacePath(effectPathArray)
   #写入信号路径
   SPA_Write.spacePathWrite(spacePathArray)
 end

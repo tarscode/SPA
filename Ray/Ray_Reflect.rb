@@ -66,34 +66,61 @@ module Ray_Reflect
   module_function :reflect
 
   #计算多次反射
-  def multiReflect(ue, cubeArray,  pointArray)
+  def multiReflect(ue, cubeArray, pointArray)
     endPoint = ue.coordinate
     multiReflectPathArray = Array.new
     pointArray.each do |levelThreePoint|
       p "Moudle:SPA_Reflect Method:multiReflect #{levelThreePoint.id}"
       reflectTwoPlane = $planeHash[levelThreePoint.planeId]
-      reflectPointTwo = Space_Intersect.intersect(levelThreePoint.coordinate,endPoint,reflectTwoPlane) #求二次反射点
-      pointTwoResult = Space_Intersect.verifyPoint(levelThreePoint.coordinate,endPoint,reflectPointTwo)
+      reflectPointTwo = Space_Intersect.intersect(levelThreePoint.coordinate, endPoint, reflectTwoPlane) #求二次反射点
+      pointTwoResult = Space_Intersect.verifyPoint(levelThreePoint.coordinate, endPoint, reflectPointTwo)
       if pointTwoResult == 0 then
         levelTwoPoint = $pointHash[levelThreePoint.fatherId]
         reflectOnePlane = $planeHash[levelTwoPoint.planeId]
-        reflectPointOne = Space_Intersect.intersect(levelTwoPoint.coordinate,reflectPointTwo,reflectOnePlane)
-        pointOneResult = Space_Intersect.verifyPoint(levelTwoPoint.coordinate,reflectPointTwo,reflectPointOne)
+        p levelTwoPoint
+        p "planeId#{levelTwoPoint.planeId}"
+        p "reflectOnePlane#{reflectOnePlane}"
+        reflectPointOne = Space_Intersect.intersect(levelTwoPoint.coordinate, reflectPointTwo, reflectOnePlane)
+        pointOneResult = Space_Intersect.verifyPoint(levelTwoPoint.coordinate, reflectPointTwo, reflectPointOne)
         if pointOneResult == 0 then
           #第一段折射路径处理
-          beginPoint = $pointHash[levelTwoPoint.fatherId]#获取起始点
+          beginPoint = $pointHash[levelTwoPoint.fatherId] #获取起始点
           signal = $signalHash[beginPoint.id] #信号对象
           preCubeArray = cubeArray.clone
-          preCubeArray = deleteCube(levelTwoPoint.cubeId,preCubeArray)
+          preCubeArray = deleteCube(levelTwoPoint.cubeId, preCubeArray)
           preNe = NetElement.new
           preNe.coordinate = beginPoint.coordinate
           preUe = UserEquipment.new
           preUe.coordinate = reflectPointOne
-          preRefractPath = Ray_Refract.refract(beginPoint,preUe,preCubeArray,signal) #第一段折射路径
+          preRefractPath = Ray_Refract.refract(preNe, preUe, preCubeArray, signal) #第一段折射路径
           #第二段折射路径处理
+          signal.strength = preRefractPath[0]
+          midCubeArray = deleteCube(levelThreePoint.cubeId, preCubeArray)
+          midNe = NetElement.new
+          midNe.coordinate = reflectPointOne
+          midUe = UserEquipment.new
+          midUe.coordinate = reflectPointTwo
+          midRefractPath = Ray_Refract.refract(midNe, midUe, midCubeArray, signal) #第二段折射路径
           #第三段折射路径处理
+          signal.strength = midRefractPath[0]
+          nextCubeArray = cubeArray.clone
+          nextCubeArray = deleteCube(levelThreePoint.cubeId, nextCubeArray)
+          nextNe = NetElement.new
+          nextNe.coordinate = reflectPointTwo
+          nextUe = ue
+          nextRefractPath = Ray_Refract.refract(nextNe, nextUe, nextCubeArray, signal) #第三段折射路径
           #二次反射总路径
-          multiReflectPath = [beginPoint.coordinate,reflectPointOne,reflectPointTwo,endPoint]
+          multiReflectPath2 = [beginPoint.coordinate,reflectPointOne,reflectPointTwo,endPoint]
+          #multiReflectPathArray.push(multiReflectPath)
+          multiReflectSignalValue = nextRefractPath[0] #信号强度
+          multiReflectDelay = preRefractPath[1]+midRefractPath[1]+nextRefractPath[1]
+          multiReflectPointArray = preRefractPath[2]+midRefractPath[2].drop(1)+nextRefractPath[2].drop(1)
+          multiReflectPath = Path.new
+          multiReflectPath.neId = beginPoint.id
+          multiReflectPath.ueId = ue.id
+          multiReflectPath.loss = multiReflectSignalValue
+          multiReflectPath.delay = multiReflectDelay
+          multiReflectPath.pointArray = multiReflectPointArray
           multiReflectPathArray.push(multiReflectPath)
         end
       end

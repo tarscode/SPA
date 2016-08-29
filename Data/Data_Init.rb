@@ -73,6 +73,8 @@ module Data_Init
     end
   end
 
+  module_function :signalInit
+
   #初始化建立虚拟源树旧版本
   def initPointTreeBefore(neArray, cubeArray)
     levelOneId = 100;
