@@ -26,27 +26,32 @@ require File.join(File.expand_path(".."), '/Entity/Point')
 require 'benchmark'
 require 'logger'
 
-def rayTracing
+def mainRun
   #创建日志文件,OSX环境
   SPA_Write.createFile(2)
+  #生成终端数据
+  #ueData = Data_Test.ue(1)
+  #SPA_Write.ueWrite(ueData)
   #创建日志文件
   loggerFile = File.new(File.expand_path("..")+"//Log//logger.txt", "w+")
   $logger = Logger.new(loggerFile)
   #数据文件名
-  planeFile = File.expand_path("..")+"/Doc/Space_Least.txt";
-  planeFile2 = File.expand_path("..")+"/Doc/Space_Least2.txt";
+  planeFile = File.expand_path("..")+"/Doc/Space_Curve.txt";
   neFile = File.expand_path("..")+"/Doc/NetElement.txt";
   pointFile = File.expand_path("..")+"/Doc/PointTree.txt";
   ueFile = File.expand_path("..")+"/Doc/UserEquipment.txt";
+  singalFile = File.expand_path("..")+"/Doc/Signal.txt";
   #获取数据
-  planeCubeArray = SPA_Read.planeCube(planeFile2) #平面数组
+  planeCubeArray = SPA_Read.planeCube(planeFile) #平面数组
   planeArray = planeCubeArray[0]
   cubeArray = planeCubeArray[1]
   neArray = SPA_Read.ne(neFile) #网元数组
   ueArray = SPA_Read.ue(ueFile) #终端数组
+  signalArray = SPA_Read.signal(singalFile) #信号数组
   #初始化
   Data_Init.planeInit(planeArray)
   Data_Init.cubeInit(cubeArray)
+  Data_Init.signalInit(signalArray)
   #数据测试
 
   #写入源点
@@ -63,6 +68,6 @@ def rayTracing
 end
 
 p Benchmark.realtime {
-  rayTracing
+  mainRun
   p "运行时间:"
 }

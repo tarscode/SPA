@@ -59,7 +59,7 @@ module Data_Test
     point2 = [5200, 6200, 0]
     dx = (point2[0]- point1[0])/10.0
     dy = (point2[1]- point1[1])/10.0
-    z = 200.0
+    z = 1200.0
     pointArray = Array.new
     id =10000
     for i in 0..9

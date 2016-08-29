@@ -110,4 +110,48 @@ module Data_Convert
   end
 
   module_function :levelThreePointArray
+
+  #首径计算
+  def firstPath(pathArray)
+    firstPathPointHash= Hash.new
+    pathArray.each do |path|
+      if !firstPathPointHash.has_key?path.ueId then
+        firstPathPointHash[path.ueId] = 0
+      end
+      if path.pointArray.size == 2 || path.pointArray.size == 4 then
+        firstPathPointHash[path.ueId] = firstPathPointHash[path.ueId]+1
+         end
+      end
+    return firstPathPointHash
+  end
+
+  module_function :firstPath
+
+  #多径计算
+  def multiPath(pathArray)
+    multiPathPointHash = Hash.new
+    pathArray.each do |path|
+      if multiPathPointHash[path.ueId] == nil then
+        multiPathPointHash[path.ueId] =1
+      else
+        multiPathPointHash[path.ueId] = multiPathPointHash[path.ueId]+1
+      end
+    end
+    return multiPathPointHash
+  end
+
+  module_function :multiPath
+
+  #hash转换成数组
+  def hash2Array(pathHash)
+    hashPathArray = Array.new
+    pathHash.each { |key,value|
+      hashPath = $ueHash[key]+ [value]
+      hashPathArray.push(hashPath)
+    }
+    return hashPathArray
+  end
+
+  module_function :hash2Array
 end
+

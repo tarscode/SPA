@@ -30,16 +30,14 @@ def rayTracing
   SPA_File.inputFile
   p "rayTracing"
   #生成终端数据
-  #ueData = Data_Test.ue(1)
-  #SPA_Write.ueWrite(ueData)
+  ueData = Data_Test.ue(10)
+  SPA_Write.ueWrite(ueData)
   #创建网格
   #gridData = Data_Test.grid()
   #SPA_Write.ueWrite(gridData)
-  #SPA_Write.gridWrite(gridData)
   #创建日志文件,OSX环境
   SPA_Write.createFile(2)
   #数据文件名
-  #planeFile = File.expand_path("..")+"/Doc/Space_Small.txt";
   planeFile = File.expand_path("..")+"/Doc/Space_Curve.txt";
   neFile = File.expand_path("..")+"/Doc/NetElement.txt";
   ueFile = File.expand_path("..")+"/Doc/UserEquipment.txt";
@@ -59,6 +57,7 @@ def rayTracing
   #初始化
   Data_Init.planeInit(planeArray)
   Data_Init.cubeInit(cubeArray)
+  Data_Init.ueInit(ueArray)
   #数据输出
   SPA_Write.cubeWrite(cubeArray) #物体及平面数据文件
   #数据测试
@@ -96,13 +95,24 @@ def rayTracing
       end
     end
   end
+
+
   #删除低于信号阀值的路径
-  #effectPathArray = Data_Convert.effectPath(pathArray)
+  effectPathArray = Data_Convert.effectPath(pathArray)
   #包含不满足信号强度的全部路径
-  effectPathArray = pathArray
+  #effectPathArray = pathArray
   signalPathArray = Data_Convert.pathToSignalPath(effectPathArray)
 
   spacePathArray = Data_Convert.pathToSpacePath(effectPathArray)
+
+  #计算首径
+  firstPathHash = Data_Convert.firstPath(effectPathArray)
+  firstPathArray = Data_Convert.hash2Array(firstPathHash)
+  SPA_Write.firstPathWrite(firstPathArray)
+  #计算多径
+  multiPathHash = Data_Convert.multiPath(effectPathArray)
+  multiPathArray = Data_Convert.hash2Array(multiPathHash)
+  SPA_Write.multiPathWrite(multiPathArray)
   #空间径合法性验证
   #spacePathArrayResult = Data_Test.spacePath(spacePathArray)
   #p "空间径合法性验证: #{spacePathArrayResult}"

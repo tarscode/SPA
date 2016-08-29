@@ -12,4 +12,5 @@ class Plane
   attr_accessor :point #凸点坐标
   attr_accessor :material #面材质
   attr_accessor :type #面类型
+  attr_accessor :area #面类型
 end

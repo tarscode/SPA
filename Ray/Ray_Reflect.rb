@@ -56,11 +56,9 @@ module Ray_Reflect
             reflectPath = [reflectSignalValue, reflectDelay, reflectPointArray]
             $logger.info("reflectPath:"+reflectPath.to_s)
             reflectPathArray.push(reflectPath)
-            #reflectCubeArray.insert(0, cube) #添加回反射物体
           end
         end
       end
-      #cubeArray.push(tempCube) #加回当前物体
     end
     return reflectPathArray
   end
@@ -68,10 +66,11 @@ module Ray_Reflect
   module_function :reflect
 
   #计算多次反射
-  def multiReflect(ue, cubeArray, signal, pointArray)
+  def multiReflect(ue, cubeArray,  pointArray)
     endPoint = ue.coordinate
     multiReflectPathArray = Array.new
     pointArray.each do |levelThreePoint|
+      p "Moudle:SPA_Reflect Method:multiReflect #{levelThreePoint.id}"
       reflectTwoPlane = $planeHash[levelThreePoint.planeId]
       reflectPointTwo = Space_Intersect.intersect(levelThreePoint.coordinate,endPoint,reflectTwoPlane) #求二次反射点
       pointTwoResult = Space_Intersect.verifyPoint(levelThreePoint.coordinate,endPoint,reflectPointTwo)
@@ -81,7 +80,19 @@ module Ray_Reflect
         reflectPointOne = Space_Intersect.intersect(levelTwoPoint.coordinate,reflectPointTwo,reflectOnePlane)
         pointOneResult = Space_Intersect.verifyPoint(levelTwoPoint.coordinate,reflectPointTwo,reflectPointOne)
         if pointOneResult == 0 then
-          beginPoint = $pointHash[levelTwoPoint.fatherId]
+          #第一段折射路径处理
+          beginPoint = $pointHash[levelTwoPoint.fatherId]#获取起始点
+          signal = $signalHash[beginPoint.id] #信号对象
+          preCubeArray = cubeArray.clone
+          preCubeArray = deleteCube(levelTwoPoint.cubeId,preCubeArray)
+          preNe = NetElement.new
+          preNe.coordinate = beginPoint.coordinate
+          preUe = UserEquipment.new
+          preUe.coordinate = reflectPointOne
+          preRefractPath = Ray_Refract.refract(beginPoint,preUe,preCubeArray,signal) #第一段折射路径
+          #第二段折射路径处理
+          #第三段折射路径处理
+          #二次反射总路径
           multiReflectPath = [beginPoint.coordinate,reflectPointOne,reflectPointTwo,endPoint]
           multiReflectPathArray.push(multiReflectPath)
         end
@@ -94,11 +105,11 @@ module Ray_Reflect
   #判断反射面的有效性
   def verifyReflectPlane(beginPoint, reflectPoint, cube, reflectPlane)
     cube.plane.each do |plane|
-      if plane == reflectPlane then
+      if plane.id == reflectPlane.id then
         next
       end
-      interPoint = Space_Intersect.intersect(beginPoint, reflectPoint, plane)
-      pointResult = Space_Intersect.verifyPoint(beginPoint, reflectPoint, interPoint)
+      intersectPoint = Space_Intersect.intersect(beginPoint, reflectPoint, plane)
+      pointResult = Space_Intersect.verifyPoint(beginPoint, reflectPoint, intersectPoint)
       if pointResult == 0 then
         return false
       end

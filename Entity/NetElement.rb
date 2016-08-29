@@ -12,4 +12,5 @@ class NetElement
   attr_accessor :coordinate #网元坐标
   attr_accessor :signal #网元信号对象数组
   attr_accessor :type #网元类型
+
 end

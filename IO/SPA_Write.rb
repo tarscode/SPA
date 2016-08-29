@@ -126,19 +126,47 @@ module SPA_Write
       treeFile.syswrite("\n")
     end
   end
+
   module_function :treeWrite
 
   #输出物体及其平面数据
   def cubeWrite(cubeArray)
     cubeFile = File.new(File.expand_path("..")+'//Doc//cubeArray'+".txt", "w+")
     cubeArray.each do |cube|
-      cubeFile.syswrite('cubeId:'+' '+cube.id.to_s+' '+cube.plane.length.to_s+"\n" )
+      cubeFile.syswrite('cubeId:'+' '+cube.id.to_s+' '+cube.plane.length.to_s+"\n")
       planeArray = cube.plane
       planeArray.each do |plane|
-        cubeFile.syswrite('planeId:'+' '+plane.id.to_s+"\n" )
-        cubeFile.syswrite(plane.equation.to_s+' '+plane.point.to_s+"\n" )
+        cubeFile.syswrite('planeId:'+' '+plane.id.to_s+"\n")
+        cubeFile.syswrite(plane.equation.to_s+' '+plane.point.to_s+"\n")
       end
     end
   end
+
   module_function :cubeWrite
+
+  #首径输出及多径输出
+  def firstPathWrite(pathArray)
+    firstPathFile = File.new(File.expand_path("..")+'//Doc//firstPath'+".txt", "w+")
+    pathArray.each do |path|
+      for i in 0..3
+        firstPathFile.syswrite(path[i].to_s+' ')
+      end
+      firstPathFile.syswrite("\n")
+    end
+  end
+
+  module_function :firstPathWrite
+
+  #首径输出及多径输出
+  def multiPathWrite(pathArray)
+    multiPathFile = File.new(File.expand_path("..")+'//Doc//multiPath'+".txt", "w+")
+    pathArray.each do |path|
+      for i in 0..3
+        multiPathFile.syswrite(path[i].to_s+' ')
+      end
+      multiPathFile.syswrite("\n")
+    end
+  end
+
+  module_function :multiPathWrite
 end

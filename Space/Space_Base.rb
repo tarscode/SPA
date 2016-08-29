@@ -56,16 +56,17 @@ module Space_Base
   end
 
   #计算点关于平面的镜像点
-  def mirrorPoint(point,planeEquation)
-    x0,y0,z0 = point
-    a,b,c,d = planeEquation
+  def mirrorPoint(point, planeEquation)
+    x0, y0, z0 = point
+    a, b, c, d = planeEquation
     t = -2*(a*x0+b*y0+c*z0+d)/(a*a+b*b+c*c)
     x1 = t*a+x0
     y1 = t*b+y0
     z1 = t*c+z0
-    mirrorPoint =[x1,y1,z1]
+    mirrorPoint =[x1, y1, z1]
     return mirrorPoint
   end
+
   module_function :mirrorPoint
 
   #计算直线和平面夹角
@@ -77,6 +78,7 @@ module Space_Base
     n = PI/2-asin((a*m+b*n+c*p).abs/(Math.sqrt(a*a+b*b+c*c)*Math.sqrt(m*m+n*n+p*p)))
     return n
   end
+
   module_function :linePlaneAngle
 
   #计算物体中心坐标
@@ -95,22 +97,30 @@ module Space_Base
 
   module_function :cubeCenter
 
+  #计算平面中心坐标
+  def planeCenter(plane)
+    x, y, z = 0, 0, 0
+    pointArray = plane.point
+    len = pointArray.length
+    for i in 0..len-1
+      x = x + pointArray[i][0]
+      y = y + pointArray[i][1]
+      z = z + pointArray[i][2]
+    end
+    centerPoint = [x*1.0/len, y*1.0/len, z*1.0/len]
+    return centerPoint
+  end
+
+  module_function :planeCenter
+
   #计算路径传播时延
-  def pathDelay(path,n)
+  def pathDelay(path, n)
     #speed = 300000000000.0
     speed = 299792458000.0
     len = 0.0
     for i in 0..n-2
-      len = len + pointDistance(path[i],path[i+1])
-      #p "点顺序:#{path[i]}"
-      #p "局部距离:#{pointDistance(path[i],path[i+1])}"
-      #p "部分求和距离:#{len}"
+      len = len + pointDistance(path[i], path[i+1])
     end
-
-    len2 =  pointDistance(path[0],path[n-1])
-      p "--------------距离差异-------------"
-      p "实际距离:#{len2}"
-      p "数组路径距离:#{len}"
     delay = len*1.0/speed
     return delay;
   end
@@ -118,20 +128,21 @@ module Space_Base
   module_function :pathDelay
 
   #计算两条直线之间的夹角
-  def lineLineAngle(beginPoint1,endPoint1,beginPoint2,endPoint2)
-    x1,y1,z1 = beginPoint1
-    x2,y2,z2 = endPoint1
-    x3,y3,z3 = beginPoint2
-    x4,y4,z4 = endPoint2
-    a1,b1,c1 = x1-x2,y1-y2,z1-z2
-    a2,b2,c2 = x3-x4,y3-y4,z3-z4
+  def lineLineAngle(beginPoint1, endPoint1, beginPoint2, endPoint2)
+    x1, y1, z1 = beginPoint1
+    x2, y2, z2 = endPoint1
+    x3, y3, z3 = beginPoint2
+    x4, y4, z4 = endPoint2
+    a1, b1, c1 = x1-x2, y1-y2, z1-z2
+    a2, b2, c2 = x3-x4, y3-y4, z3-z4
     n=Math.acos((a1*a2+b1*b2+c1*c2).abs/(Math.sqrt(a1**2+b1**2+c1**2)*Math.sqrt(a2**2+b2**2+c2**2)))
     return n
   end
+
   module_function :lineLineAngle
 
   #算积分
-  def integral (a,b,n=1000)
+  def integral (a, b, n=1000)
     sum=0.0
     dx=(b-a)/n.to_f
     n.times do
@@ -140,11 +151,12 @@ module Space_Base
     end
     sum
   end
+
   module_function :integral
 
   #点到直线距离
-  def distance(point, firstPoint,lastpoint )
-    x1,y1,z1 =point
+  def distance(point, firstPoint, lastpoint)
+    x1, y1, z1 =point
     x2, y2, z2 = firstPoint
     x3, y3, z3 = lastpoint
     sa =Math.sqrt((x1-x2)**2+(y2-y1)**2+(z2-z1)**2)
@@ -155,6 +167,7 @@ module Space_Base
     distance =2*s/sc
     return distance
   end
+
   module_function :distance
 
   #计算镜像点数组
@@ -162,13 +175,43 @@ module Space_Base
     mirrorPointArray = Array.new
     cubeArray.each do |cube|
       cube.plane.each do |plane|
-        coordinate = mirrorPoint(point.coordinate, plane.equation) #求源点的镜像点
-        mirrorPoint = Point.new(coordinate, point.id, plane.id, cube.id)
-        mirrorPointArray.push(mirrorPoint)
+        if plane.area < 410000 then
+          next
+        end
+        $logger.info("cubeId:"+cube.id.to_s)
+        interPlanePoint = planeCenter(plane)
+        pointResult = verifyReflectPlane(point.coordinate, interPlanePoint, cube, plane)
+        if  pointResult== true then
+          coordinate = mirrorPoint(point.coordinate, plane.equation) #求源点的镜像点
+          mirrorPoint = Point.new(coordinate, point.id, plane.id, cube.id)
+          mirrorPointArray.push(mirrorPoint)
+        else
+          next
+        end
       end
     end
     return mirrorPointArray
   end
 
   module_function :mirrorPointArray
+
+  #判断反射面的有效性
+  def verifyReflectPlane(beginPoint, reflectPoint, cube, reflectPlane)
+    cube.plane.each do |plane|
+      $logger.info("planeId:"+plane.id.to_s)
+      if plane.id == reflectPlane.id then
+        $logger.info("nextId:"+plane.id.to_s)
+        next
+      end
+      intersectPoint = Space_Intersect.intersect(beginPoint, reflectPoint, plane)
+      pointResult = Space_Intersect.verifyPoint(beginPoint, reflectPoint, intersectPoint)
+      $logger.info("intersectPoint:"+intersectPoint.to_s+"pointResult:"+pointResult.to_s)
+      if pointResult == 0 then
+        return false
+      end
+    end
+    return true
+  end
+
+  module_function :verifyReflectPlane
 end
