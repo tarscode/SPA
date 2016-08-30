@@ -30,7 +30,7 @@ def rayTracing
   SPA_File.inputFile
   p "rayTracing"
   #生成终端数据
-  ueData = Data_Test.ue(10)
+  ueData = Data_Test.ue(1)
   SPA_Write.ueWrite(ueData)
   #创建网格
   #gridData = Data_Test.grid()
@@ -67,10 +67,6 @@ def rayTracing
   #cubeId = Data_Test.cubeQueryByPlane(10001,cubeArray)[0]
   cubeId = Data_Test.cubeQueryByPoint([10400,6200,6200],cubeArray)[0]
   cube = $cubeHash[cubeId]
-  $logger.info("Main: searchCube:"+cubeId.to_s)
-  $logger.info("Main: "+" cubeEntity: "+cube.plane.to_s)
-  $logger.info("Main: "+" cubeId: "+cubeId.to_s)
-  $logger.info("Main: "+" cubeCenterPoint: "+Data_Test.cubeCenter(cube).to_s)
 
   #写入源点
   #pointArray = Data_Init.initPointTree(neArray,cubeArray)
@@ -112,9 +108,9 @@ def rayTracing
 
 
   #删除低于信号阀值的路径
-  effectPathArray = Data_Convert.effectPath(pathArray)
+  #effectPathArray = Data_Convert.effectPath(pathArray)
   #包含不满足信号强度的全部路径
-  #effectPathArray = pathArray
+  effectPathArray = pathArray
   signalPathArray = Data_Convert.pathToSignalPath(effectPathArray)
 
   spacePathArray = Data_Convert.pathToSpacePath(effectPathArray)
@@ -127,9 +123,6 @@ def rayTracing
   multiPathHash = Data_Convert.multiPath(effectPathArray)
   multiPathArray = Data_Convert.hash2Array(multiPathHash)
   SPA_Write.multiPathWrite(multiPathArray)
-  #空间径合法性验证
-  #spacePathArrayResult = Data_Test.spacePath(spacePathArray)
-  #p "空间径合法性验证: #{spacePathArrayResult}"
   #写入信号路径
   SPA_Write.spacePathWrite(spacePathArray)
   #写入空间路径
