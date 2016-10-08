@@ -15,47 +15,78 @@
 require 'socket'
 
 module IO_Server
-  def base(port)
-    server = TCPServer.open(port)   # Socket 监听端口为 2000
-    loop {                          # 永久运行服务
-      Thread.start(server.accept) do |client|
-        client.puts(Time.now.ctime) # 发送时间到客户端
-        client.puts "Closing the connection. Bye!"
-        client.close                # 关闭客户端连接
-      end
-    }
-  end
-  module_function :base
 
-  def test
-    server = TCPServer.open(2000)   # Socket 监听端口为 2000
-    loop {                          # 永久运行服务
+  #spa模块服务器
+  def spa
+    server = TCPServer.open(2000) # Socket 监听端口为 2000
+    loop {# 永久运行服务
       Thread.start(server.accept) do |client|
         p "server"
-        p client.gets
-        client.puts("serverdata")
-        filename = File.expand_path("..")+"/Doc/NetElement.txt"
-        file = File.open(filename)
-        file.each_line do |line|
-          client.puts(line)
+        requestFile = client.gets
+        requestFile = requestFile.delete("\n") #删除换行符
+        if requestFile=='ne' then
+          filename = '/Users/liuyang/Documents/Github/SPA'+'/Doc/NetElement.txt'
+        elsif requestFile == 'path'
+          filename = '/Users/liuyang/Documents/Github/SPA'+'/Log/signalPath.txt'
+        elsif requestFile == 'ueDistance'
+          filename = '/Users/liuyang/Documents/Github/SPA'+'/Log/ueDistance.txt'
+        elsif requestFile == 'UserEquipment'
+          filename = '/Users/liuyang/Documents/Github/SPA'+'/Doc/UserEquipment.txt'
+        else
+          filename = '/Users/liuyang/Documents/Github/SPA/Doc/'+requestFile.to_s+'.txt'
         end
-        client.close                # 关闭客户端连接
+        fileExist = FileTest.exist?(filename) #判断文件是否存在
+        p "filename#{filename}"
+        if fileExist then
+          client.puts('yes')
+          file = File.open(filename)
+          file.each_line do |line|
+            client.puts(line)
+          end
+          client.close # 关闭客户端连接
+        else
+          client.puts('no')
+          client.close
+        end
       end
     }
   end
-  module_function :test
 
-  def server1
-    Socket.tcp_server_loop(2000) do |connection|
-      while line = connection.gets   # 从 socket 中读取每行数据
-        puts line.chop      # 打印到终端
+  module_function :spa
+
+  #car模块服务器
+  def car
+    server = TCPServer.open(2000) # Socket 监听端口为 2000
+    loop {# 永久运行服务
+      Thread.start(server.accept) do |client|
+        p "server"
+        requestFile = client.gets
+        requestFile = requestFile.delete("\n") #删除换行符
+        if requestFile=='ue' then
+          filename = '/Users/liuyang/Documents/Github/SPA/Doc/NetElement.txt'
+          #filename = File.expand_path('..')+'/data/toSPA/ue.txt'
+        else
+          filename = '/Users/liuyang/Documents/Github/SPA/Doc/'+requestFile.to_s+'.txt'
+        end
+        fileExist = FileTest.exist?(filename) #判断文件是否存在
+        p fileExist
+        if fileExist then
+          client.puts('yes')
+          file = File.open(filename)
+          file.each_line do |line|
+            client.puts(line)
+          end
+          client.close # 关闭客户端连接
+        else
+          client.puts('no')
+          client.close
+        end
       end
-      connection.close
-    end
+    }
   end
-  module_function :server1
+
+  module_function :car
 
 end
-
-#IO_Server.test
-IO_Server.server1
+#IO_Server.spa
+IO_Server.car

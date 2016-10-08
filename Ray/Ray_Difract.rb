@@ -12,15 +12,15 @@
 备注:
 =end
 include Math
-require File.join(File.expand_path(".."), '/Entity/Path')
-require File.join(File.expand_path(".."), '/Entity/Sign')
-require File.join(File.expand_path(".."), '/Loss/Loss_Reflect')
-require File.join(File.expand_path(".."), '/Loss/Loss_Refract')
-require File.join(File.expand_path(".."), '/Ray/Ray_Refract')
-require File.join(File.expand_path(".."), '/Loss/Loss_Diffract')
-require File.join(File.expand_path(".."), '/Data/Data_VisibleWedge')
-require File.join(File.expand_path(".."), '/Space/Space_Base')
-require File.join(File.expand_path(".."), '/Space/SPA_DifPoint')
+require File.join($SPA_Path, '/Entity/Path')
+require File.join($SPA_Path, '/Entity/Sign')
+require File.join($SPA_Path, '/Loss/Loss_Reflect')
+require File.join($SPA_Path, '/Loss/Loss_Refract')
+require File.join($SPA_Path, '/Ray/Ray_Refract')
+require File.join($SPA_Path, '/Loss/Loss_Diffract')
+require File.join($SPA_Path, '/Data/Data_VisibleWedge')
+require File.join($SPA_Path, '/Space/Space_Base')
+require File.join($SPA_Path, '/Space/SPA_DifPoint')
 module Ray_Difract
   def difract(ne, ue, cubeArray, signal)
     beginPoint=ne.coordinate

@@ -15,62 +15,112 @@
 require 'socket'
 
 module IO_Client
-  def base(hostname,port)
-    p "client"
-    s = TCPSocket.open(hostname, port)
-    while line = s.gets   # 从 socket 中读取每行数据
-      puts line.chop      # 打印到终端
-    end
-    s.close               # 关闭 socket
-  end
-  module_function :base
-
+  #好用
   def test
-    #hostname = 'localhost'
+    hostname = 'localhost'
     #hostname = '125.223.126.136'
-    hostname = '192.168.1.100'
-    #port = 2000
-    port = 12345
-    file = File.new(File.expand_path("..")+'//Log//file'+".txt", "w+")
-    s = TCPSocket.open(hostname, port)
-    sleep(1)
-    s.puts(250)
-    s.puts("hello")
-    while line = s.gets   # 从 socket 中读取每行数据
-      file.syswrite(line)
-      puts line.chop      # 打印到终端
-    end
-    s.close               # 关闭 socket
-  end
-  module_function :test
-
-  def test1
-    #hostname = 'localhost'
-    #hostname = '125.223.126.226'
     #hostname = '192.168.1.100'
-    hostname = '125.223.126.136'
     port = 2000
     #port = 12345
+    file = File.new(File.expand_path("..")+'//Log//socket'+".txt", "w+")
     s = TCPSocket.open(hostname, port)
-    p "client"
     sleep(1)
-    s.puts(229229229)
     s.puts("hello")
-    s.puts("from mac")
-    p "client2"
-    s.close               # 关闭 socket
-  end
-  module_function :test1
-
-  def client1
-    Socket.tcp('localhost',2000) do |connection|
-      connection.puts("hello this is client1")
-      connection.close
+    while line = s.gets # 从 socket 中读取每行数据
+      file.syswrite(line) # 写入文件
+      puts line.chop # 打印到终端
     end
+    s.close # 关闭 socket
   end
-  module_function :client1
+
+  module_function :test
+
+  #传播分析模块客户端
+  def spa
+    #hostname = 'localhost'
+    hostname = '125.223.119.101'
+    #hostname = '192.168.31.20'
+    port = 2000
+    uefile =File.expand_path('..')+'//Doc//ue.txt'
+    #永久运行服务
+    loop {
+      if !FileTest.exist?(uefile)||File.size(uefile) == 0 then
+        p "not exist"
+        file = File.new(uefile, 'w+')
+        filename = 'ue'
+      else
+        p "exist"
+        sleep(5)
+        next
+      end
+      s = TCPSocket.open(hostname, port)
+      sleep(1)
+      s.puts(filename)
+      while line = s.gets # 从 socket 中读取每行数据
+        if line.to_s== "no\n" then
+          sleep(5)
+          s.close
+        elsif line.to_s == "yes\n" then
+        else
+          file.syswrite(line) # 写入文件
+          puts line.chop # 打印到终端
+        end
+      end
+      s.close # 关闭 socket
+    }
+  end
+
+  module_function :spa
+
+  #编码测距模块客户端
+  def car
+    hostname = 'localhost'
+    #hostname = '125.223.126.136'
+    #hostname = '192.168.1.100'
+    port = 2000
+    nefile =File.expand_path('..')+'//ne.txt'
+    pathfile = File.expand_path('..')+'//signalPath.txt'
+    distancefile = File.expand_path('..')+'//ueDistance.txt'
+    uefile = File.expand_path('..')+'//UserEquipment.txt'
+    #永久运行服务
+    loop {
+      if !FileTest.exist?(nefile)||File.size(nefile) == 0 then
+        file = File.new(nefile, 'w+')
+        filename = 'ne'
+      elsif !FileTest.exist?(pathfile) || File.size(pathfile) == 0 then
+        file = File.new(pathfile, 'w+')
+        filename = 'path'
+      elsif !FileTest.exist?(distancefile) || File.size(distancefile) == 0 then
+        file = File.new(distancefile, 'w+')
+        filename = 'ueDistance'
+      elsif !FileTest.exist?(uefile) || File.size(uefile) == 0 then
+        file = File.new(uefile, 'w+')
+        filename = 'UserEquipment'
+      else
+        sleep(5)
+        next
+      end
+      s = TCPSocket.open(hostname, port)
+      sleep(1)
+      s.puts(filename)
+      while line = s.gets # 从 socket 中读取每行数据
+        p line.to_s
+        if line.to_s== "no\n" then
+          sleep(5)
+          s.close
+        elsif line.to_s == "yes\n" then
+        else
+          file.syswrite(line) # 写入文件
+          puts line.chop # 打印到终端
+        end
+      end
+      s.close # 关闭 socket
+    }
+  end
+
+  module_function :car
 
 end
-IO_Client.test1
-#IO_Client.base('125.223.126.136',2000)
-#IO_Client.base('localhost',2000)
+#IO_Client.car
+IO_Client.spa
+

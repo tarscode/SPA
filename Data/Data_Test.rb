@@ -32,34 +32,13 @@ module Data_Test
   end
 
   module_function :ue
-  #目前不好使
-  def spacePath(spacePathArray)
-    spacePathArray.each do |path|
-      n = path.length
-      beginPoint = path[0]
-      endPoint = path[n - 1]
-      x1, y1, z1=beginPoint
-      x2, y2, z2=endPoint
-      a, b, c = x1-x2, y1-y2, z1-z2
-      for i in 0..n-2
-        a2, b2, c2 = path[i][0]-path[i-1][0], path[i][1]-path[i-1][1], path[i][2]-path[i-1][2]
-        if (a*a2<0||b*b2<0||c*c2<0)
-          p "空间径非法顺序 #{i} #{path[i]} #{path[i-1]}"
-          return false
-        end
-      end
-    end
-    return true
-  end
-
-  module_function :spacePath
 
   def grid()
-    point1 = [200, 1700, 0]
-    point2 = [5200, 6200, 0]
+    point1 = [5300, 1699, 0]
+    point2 = [10300, 6100, 0]
     dx = (point2[0]- point1[0])/10.0
     dy = (point2[1]- point1[1])/10.0
-    z = 1200.0
+    z = 4000.0
     pointArray = Array.new
     id =10000
     for i in 0..9
@@ -73,6 +52,29 @@ module Data_Test
   end
 
   module_function :grid
+
+  def spaceGrid()
+    point1 = [200, 1200, 0]
+    point2 = [15600, 6200, 0]
+    dx = (point2[0]- point1[0])/30.0
+    dy = (point2[1]- point1[1])/10.0
+    z1 = 5700.0
+    z2 = 2000.0
+    pointArray = Array.new
+    id =10000
+    for i in 0..29
+      for j in 0..9
+        id =id +1
+        point = [id, point1[0]+dx*i, point1[1]+dy*j, z1]
+        #point2 = [id, point1[0]+dx*i, point1[1]+dy*j, z2]
+        pointArray.push(point)
+        #pointArray.push(point2)
+      end
+    end
+    return pointArray
+  end
+
+  module_function :spaceGrid
 
   def cubeTest(cubeArray)
     $logger.info("Module:Data_Test cubeSize:"+cubeArray.length.to_s)
@@ -144,5 +146,19 @@ module Data_Test
   end
 
   module_function :cubeQueryByPlane
+
+  #计算首径覆盖数目大于四终端的覆盖率
+  def countFirstPath(firstPathArray)
+    number = 0
+    firstPathArray.each do |path|
+      if path[3] > 3 then
+        number=number+1
+      end
+    end
+    return number*1.0/firstPathArray.length
+  end
+
+  module_function :countFirstPath
+
 end
 

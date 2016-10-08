@@ -11,15 +11,13 @@
 时间:下午6:59
 备注:
 =end
-require File.join(File.expand_path(".."), '/Entity/Cube')
-require File.join(File.expand_path(".."), '/IO/SPA_Write')
-require File.join(File.expand_path(".."), '/Entity/Path')
+require File.join($SPA_Path, '/Entity/Cube')
+require File.join($SPA_Path, '/Entity/Path')
 require 'complex'
 require 'cmath'
 module Data_Convert
   #平面数组转换成物体数组
   def planeToCube(planeArray)
-    p "模块:Data_Conver 方法:planeToCube"
     cubeArray = Array.new
     planeNumber = planeArray.length
     cubeNumber = planeNumber/6
@@ -35,7 +33,6 @@ module Data_Convert
   module_function :planeToCube
   #转换路径数组,增加网元等信息
   def convertPath(ne, ue, prePathArray)
-    p prePathArray[0] == nil
     pathArray = Array.new
     prePathArray.each do |prePath|
       path = Path.new
@@ -114,6 +111,10 @@ module Data_Convert
   #首径计算
   def firstPath(pathArray)
     firstPathPointHash= Hash.new
+    #初始化首径数目为0
+    $ueHash.each{|key,value|
+      firstPathPointHash[key] = 0
+    }
     pathArray.each do |path|
       if !firstPathPointHash.has_key?path.ueId then
         firstPathPointHash[path.ueId] = 0
@@ -130,9 +131,13 @@ module Data_Convert
   #多径计算
   def multiPath(pathArray)
     multiPathPointHash = Hash.new
+    #初始化多径数目为0
+    $ueHash.each{|key,value|
+      multiPathPointHash[key] = 0
+    }
     pathArray.each do |path|
       if multiPathPointHash[path.ueId] == nil then
-        multiPathPointHash[path.ueId] =1
+        multiPathPointHash[path.ueId] = 0
       else
         multiPathPointHash[path.ueId] = multiPathPointHash[path.ueId]+1
       end

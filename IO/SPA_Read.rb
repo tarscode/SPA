@@ -11,12 +11,12 @@
 时间:上午9:36
 备注:
 =end
-require File.join(File.expand_path(".."), '/Entity/Plane')
-require File.join(File.expand_path(".."), '/Entity/NetElement')
-require File.join(File.expand_path(".."), '/Entity/Sign')
-require File.join(File.expand_path(".."), '/Entity/UserEquipment')
-require File.join(File.expand_path(".."), '/Entity/Point')
-require File.join(File.expand_path(".."), '/Entity/Cube')
+require File.join($SPA_Path, '/Entity/Plane')
+require File.join($SPA_Path, '/Entity/NetElement')
+require File.join($SPA_Path, '/Entity/Sign')
+require File.join($SPA_Path, '/Entity/UserEquipment')
+require File.join($SPA_Path, '/Entity/Point')
+require File.join($SPA_Path, '/Entity/Cube')
 module SPA_Read
   #读取平面
   def plane(filename)
@@ -74,9 +74,6 @@ module SPA_Read
         plane.area = lineArray[lineArray.size-2].to_s.to_f#平面材质
         plane.point = pointArray #平面的点
         cube.plane[i]=plane
-        p lineArray
-        p lineArray.length
-        p plane
         planeArray.push(plane)
       end
       cubeArray.push(cube)

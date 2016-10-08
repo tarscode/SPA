@@ -1,8 +1,8 @@
 include Math
 require 'complex'
 require 'cmath'
-require File.join(File.expand_path(".."),'/Loss/Loss_Direct')
-require File.join(File.expand_path(".."),'/Space/Space_Base')
+require File.join($SPA_Path,'/Loss/Loss_Direct')
+require File.join($SPA_Path,'/Space/Space_Base')
 #计算一次绕射后的场强
 #s1是入射波波程 s2是绕射波波程 v是 劈角   f是频率
 # angle1是入射面与参考面的夹角，angle2是绕射面与参考面的夹角，angle3是入射线或绕射线与尖劈的夹角

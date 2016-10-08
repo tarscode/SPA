@@ -11,9 +11,9 @@
 时间:下午5:03
 备注:
 =end
-require File.join(File.expand_path(".."), '/Entity/Cube')
-require File.join(File.expand_path(".."), '/Entity/Plane')
-require File.join(File.expand_path(".."), '/Entity/Point')
+require File.join($SPA_Path, '/Entity/Cube')
+require File.join($SPA_Path, '/Entity/Plane')
+require File.join($SPA_Path, '/Entity/Point')
 include Math
 require 'complex'
 require 'cmath'
@@ -175,9 +175,26 @@ module Space_Base
     mirrorPointArray = Array.new
     cubeArray.each do |cube|
       cube.plane.each do |plane|
-        if plane.area < 410000 then
+        if plane.area < 430000 then #排除小面
           next
         end
+
+        if plane.area > 599900 &&plane.area < 600100 then #排除小面
+          next
+        end
+
+        if plane.area > 899900 &&plane.area < 900100 then #排除小面
+          next
+        end
+
+        if plane.area > 499900 &&plane.area < 500100 then #排除小面
+          next
+        end
+
+        if plane.area > 539900 &&plane.area < 540100 then #排除小面
+          next
+        end
+
         $logger.info("cubeId:"+cube.id.to_s)
         interPlanePoint = planeCenter(plane)
         pointResult = verifyReflectPlane(point.coordinate, interPlanePoint, cube, plane)

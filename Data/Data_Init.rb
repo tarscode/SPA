@@ -11,9 +11,8 @@
 时间:下午8:01
 备注:
 =end
-require File.join(File.expand_path(".."), '/Space/Space_Base')
-require File.join(File.expand_path(".."), '/Entity/Cube')
-require File.join(File.expand_path(".."), '/Entity/Point')
+require File.join($SPA_Path, '/Space/Space_Base')
+require File.join($SPA_Path, '/Entity/Point')
 module Data_Init
   #空间平面散列表全局变量
   $planeHash = Hash.new
@@ -135,7 +134,6 @@ module Data_Init
         pointLevelThreeArray = Space_Base.mirrorPointArray(levelTwoPoint, cubeArray) #获取三级源点
         pointLevelThreeIdArray = Array.new
         pointLevelThreeArray.each do |levelThreePoint|
-          p "initPointTree#{levelThreePoint}"
           $logger.info("Module:Data_Init Method:initPointTree Point:#{levelThreePoint}")
           levelThreeId=levelThreeId+1
           levelThreePoint.id = (levelOnePoint.id.to_s+levelTwoId.to_s+levelThreeId.to_s).to_i

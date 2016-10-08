@@ -11,9 +11,9 @@
 时间:下午2:13
 备注:
 =end
-require File.join(File.expand_path(".."), '/Entity/Path')
-require File.join(File.expand_path(".."), '/Entity/Cube')
-require File.join(File.expand_path(".."), '/IO/SPA_Read')
+require File.join($SPA_Path, '/Entity/Path')
+require File.join($SPA_Path, '/Entity/Cube')
+require File.join($SPA_Path, '/IO/SPA_Read')
 
 module Data_VisibleWedge
   def wedgeArray (cube)

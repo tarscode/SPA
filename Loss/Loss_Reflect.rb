@@ -14,7 +14,7 @@
 include Math
 require "complex"
 require "cmath"
-require File.join(File.expand_path(".."), '/Data/Data_List')
+require File.join($SPA_Path, '/Data/Data_List')
 module Loss_Reflect
   def reflect(signalValue,frequency,anglein,plane)
     planeArg = Data_List.planeArgById(plane.material)

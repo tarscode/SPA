@@ -11,7 +11,7 @@
 备注：
 =end
 include Math
-require File.join(File.expand_path(".."),'/Space/Space_Base')
+require File.join($SPA_Path,'/Space/Space_Base')
 module Space_DifPoint
 def diffractionPoint(beginPoint,endPoint,wedge)
     x1,y1,z1 = beginPoint

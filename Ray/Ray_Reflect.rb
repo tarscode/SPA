@@ -11,13 +11,13 @@
 时间:下午2:13
 备注:
 =end
-require File.join(File.expand_path(".."), '/Entity/Path')
-require File.join(File.expand_path(".."), '/Entity/Sign')
-require File.join(File.expand_path(".."), '/Entity/Cube')
-require File.join(File.expand_path(".."), '/Loss/Loss_Reflect')
-require File.join(File.expand_path(".."), '/Entity/NetElement')
-require File.join(File.expand_path(".."), '/Entity/UserEquipment')
-require File.join(File.expand_path(".."), '/Data/Data_Init')
+require File.join($SPA_Path, '/Entity/Path')
+require File.join($SPA_Path, '/Entity/Sign')
+require File.join($SPA_Path, '/Entity/Cube')
+require File.join($SPA_Path, '/Loss/Loss_Reflect')
+require File.join($SPA_Path, '/Entity/NetElement')
+require File.join($SPA_Path, '/Entity/UserEquipment')
+require File.join($SPA_Path, '/Data/Data_Init')
 module Ray_Reflect
   def reflect(ne, ue, cubeArray, signal)
     beginPoint = ne.coordinate
@@ -70,16 +70,12 @@ module Ray_Reflect
     endPoint = ue.coordinate
     multiReflectPathArray = Array.new
     pointArray.each do |levelThreePoint|
-      p "Moudle:SPA_Reflect Method:multiReflect #{levelThreePoint.id}"
       reflectTwoPlane = $planeHash[levelThreePoint.planeId]
       reflectPointTwo = Space_Intersect.intersect(levelThreePoint.coordinate, endPoint, reflectTwoPlane) #求二次反射点
       pointTwoResult = Space_Intersect.verifyPoint(levelThreePoint.coordinate, endPoint, reflectPointTwo)
       if pointTwoResult == 0 then
         levelTwoPoint = $pointHash[levelThreePoint.fatherId]
         reflectOnePlane = $planeHash[levelTwoPoint.planeId]
-        p levelTwoPoint
-        p "planeId#{levelTwoPoint.planeId}"
-        p "reflectOnePlane#{reflectOnePlane}"
         reflectPointOne = Space_Intersect.intersect(levelTwoPoint.coordinate, reflectPointTwo, reflectOnePlane)
         pointOneResult = Space_Intersect.verifyPoint(levelTwoPoint.coordinate, reflectPointTwo, reflectPointOne)
         if pointOneResult == 0 then

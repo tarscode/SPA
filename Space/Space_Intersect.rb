@@ -11,7 +11,7 @@
 时间:下午4:53
 备注:
 =end
-require File.join(File.expand_path(".."), '/IO/SPA_Write')
+require File.join($SPA_Path, '/IO/SPA_Write')
 module Space_Intersect
   def intersect(beginPoint, endPoint, plane)
     x1, y1, z1 = beginPoint
