@@ -71,7 +71,7 @@ module SPA_Read
           pointArray.push(lineArray[5+index*3,3])
         end
         plane.material = lineArray[lineArray.size-3].to_s.to_i #平面材质
-        plane.area = lineArray[lineArray.size-2].to_s.to_f#平面材质
+        plane.area = lineArray[lineArray.size-2].to_s.to_f#平面面积
         plane.point = pointArray #平面的点
         cube.plane[i]=plane
         planeArray.push(plane)

@@ -12,6 +12,8 @@
 备注:服务器模块
 说明:
 =end
+$SPA_Path = '/Users/liuyang/Documents/Github/SPA'
+require File.join($SPA_Path, '/IO/SPA_Write')
 require 'socket'
 
 module IO_Server
@@ -56,31 +58,16 @@ module IO_Server
 
   #car模块服务器
   def car
-    server = TCPServer.open(2000) # Socket 监听端口为 2000
+    server = TCPServer.open(2001) # Socket 监听端口为 2000
     loop {# 永久运行服务
       Thread.start(server.accept) do |client|
         p "server"
-        requestFile = client.gets
-        requestFile = requestFile.delete("\n") #删除换行符
-        if requestFile=='ue' then
-          filename = '/Users/liuyang/Documents/Github/SPA/Doc/NetElement.txt'
-          #filename = File.expand_path('..')+'/data/toSPA/ue.txt'
-        else
-          filename = '/Users/liuyang/Documents/Github/SPA/Doc/'+requestFile.to_s+'.txt'
-        end
-        fileExist = FileTest.exist?(filename) #判断文件是否存在
-        p fileExist
-        if fileExist then
-          client.puts('yes')
-          file = File.open(filename)
-          file.each_line do |line|
-            client.puts(line)
-          end
-          client.close # 关闭客户端连接
-        else
-          client.puts('no')
-          client.close
-        end
+        location = client.gets
+        location = location.delete("\n") #删除换行符
+        locationArray = location.split()
+        p location
+        SPA_Write.locationWrite(locationArray)
+        client.close
       end
     }
   end
@@ -88,5 +75,5 @@ module IO_Server
   module_function :car
 
 end
-#IO_Server.spa
+IO_Server.spa
 IO_Server.car

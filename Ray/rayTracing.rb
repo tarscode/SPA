@@ -33,13 +33,13 @@ def rayTracing
   SPA_File.inputFile
   p "rayTracing"
   #生成终端数据
-  #ueData = Data_Test.ue(10)
-  #SPA_Write.ueWrite(ueData)
+  ueData = Data_Test.ue(10)
+  SPA_Write.ueWrite(ueData)
   #创建网格
   #gridData = Data_Test.grid()
   #SPA_Write.ueWrite(gridData)
-  spaceGridData = Data_Test.spaceGrid()
-  SPA_Write.ueWrite(spaceGridData)
+  #spaceGridData = Data_Test.spaceGrid()
+  #SPA_Write.ueWrite(spaceGridData)
   #创建日志文件,OSX环境
   SPA_Write.createFile(2)
   #数据文件名
@@ -115,14 +115,15 @@ def rayTracing
   effectPathArray = Data_Convert.effectPath(pathArray)
   #包含不满足信号强度的全部路径
   #effectPathArray = pathArray
+
   signalPathArray = Data_Convert.pathToSignalPath(effectPathArray)
   spacePathArray = Data_Convert.pathToSpacePath(effectPathArray)
   #计算首径
-  #firstPathHash = Data_Convert.firstPath(effectPathArray)
-  #firstPathArray = Data_Convert.hash2Array(firstPathHash)
+  firstPathHash = Data_Convert.firstPath(effectPathArray)
+  firstPathArray = Data_Convert.hash2Array(firstPathHash)
   #计算首径覆盖率
-  #p Data_Test.countFirstPath(firstPathArray)
-  #SPA_Write.firstPathWrite(firstPathArray)
+  p Data_Test.countFirstPath(firstPathArray)
+  SPA_Write.firstPathWrite(firstPathArray)
   #计算多径
   #multiPathHash = Data_Convert.multiPath(effectPathArray)
   #multiPathArray = Data_Convert.hash2Array(multiPathHash)
@@ -132,7 +133,8 @@ def rayTracing
   #写入空间路径
   SPA_Write.signalPathWrite(signalPathArray)
   p "SPA end"
-  return pathArray
+  #return pathArray
+
 end
 
 p Benchmark.realtime {

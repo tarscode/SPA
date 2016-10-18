@@ -46,7 +46,7 @@ module SPA_Write
   #写入信号路径文件
   def signalPathWrite(pathArray)
     pathArray.each do |path|
-      for j in 0..3
+      for j in 0..4
         @@signalPathFile.syswrite(path[j].to_s+" ")
       end
       @@signalPathFile.syswrite("\n")
@@ -83,6 +83,19 @@ module SPA_Write
   end
 
   module_function :ueWrite
+
+  #写入定位点
+  def locationWrite(arr)
+    ueFile = File.new($SPA_Path+'//Doc//Position'+".txt", "w+")
+    for i in 0..arr.size-1
+      ueFile.syswrite(arr[i].to_s+" ")
+      if (i+1)%4==0 then
+        ueFile.syswrite("\n")
+      end
+    end
+  end
+
+  module_function :locationWrite
 
   #写入网元和终端直射距离
   def ueDistance(ueArray, neArray)

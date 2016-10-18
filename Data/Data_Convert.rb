@@ -52,7 +52,11 @@ module Data_Convert
   def pathToSignalPath(pathArray)
     signalPathArray = Array.new
     pathArray.each do |path|
-      signalPath = [path.neId, path.ueId, path.loss, path.delay]
+      firstPathFlag = 0 #首径标识
+      if path.pointArray.length==4 || path.pointArray.length==2 then
+        firstPathFlag = 1
+      end
+      signalPath = [path.neId, path.ueId, path.loss, path.delay, firstPathFlag]
       signalPathArray.push(signalPath)
     end
     return signalPathArray
@@ -112,17 +116,17 @@ module Data_Convert
   def firstPath(pathArray)
     firstPathPointHash= Hash.new
     #初始化首径数目为0
-    $ueHash.each{|key,value|
+    $ueHash.each { |key, value|
       firstPathPointHash[key] = 0
     }
     pathArray.each do |path|
-      if !firstPathPointHash.has_key?path.ueId then
+      if !firstPathPointHash.has_key? path.ueId then
         firstPathPointHash[path.ueId] = 0
       end
       if path.pointArray.size == 2 || path.pointArray.size == 4 then
         firstPathPointHash[path.ueId] = firstPathPointHash[path.ueId]+1
-         end
       end
+    end
     return firstPathPointHash
   end
 
@@ -132,7 +136,7 @@ module Data_Convert
   def multiPath(pathArray)
     multiPathPointHash = Hash.new
     #初始化多径数目为0
-    $ueHash.each{|key,value|
+    $ueHash.each { |key, value|
       multiPathPointHash[key] = 0
     }
     pathArray.each do |path|
@@ -150,7 +154,7 @@ module Data_Convert
   #hash转换成数组
   def hash2Array(pathHash)
     hashPathArray = Array.new
-    pathHash.each { |key,value|
+    pathHash.each { |key, value|
       hashPath = $ueHash[key]+ [value]
       hashPathArray.push(hashPath)
     }
@@ -158,5 +162,13 @@ module Data_Convert
   end
 
   module_function :hash2Array
+
+  #删除路径中的首径
+  def deleteFirstPath(pathArray)
+    pathArray.delete_if { |path| path.pointArray.size>4 }
+    return pathArray
+  end
+
+  module_function :deleteFirstPath
 end
 

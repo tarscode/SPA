@@ -29,9 +29,10 @@ module Ray_Difract
     difPathArray = Array.new #绕射路径数组
     difCubeArray = Ray_Refract.interSortCube(beginPoint, endPoint, cubeArray)
     if difCubeArray.length ==0 then
+    #  p "hello"
       return nil; #无绕射路径
     end
-    p "difCubeArray #{difCubeArray.length}"
+ #   p "difCubeArray #{difCubeArray.length}"
     if difCubeArray.length !=0 then
       difCubeArray.each do |cube|
         wedgeArray=Data_VisibleWedge.wedgeArray(cube)
@@ -75,9 +76,16 @@ module Ray_Difract
             diFractNe=NetElement.new
             diFractNe.coordinate=diFrPoint
             nextDifPath = Ray_Refract.refract(diFractNe, ue, difCubeArray, difSignal)
-
+            h=nextDifPath[2][1]
+         #   p "hello111#{diFractNe}"
+         #   p "hello222#{ue}"
+            h1=Space_Base.pointDistance(h, diFrPoint)/1000*1.0
+            h2=NetElement.new
+            h2.coordinate=h
+            difSignalValue1=Loss_DifLoss.diffractionEe(s1,h1,v,angle1,angle2,angle3,signal.frequency,preDifSignal,signal.strength,rn,r0)
+            nextDifPath1=Ray_Refract.refract(h2,ue,difCubeArray,difSignal)
             difDelay = preDifPath[1]+nextDifPath[1]
-            reDifSignalValue = nextDifPath[0]
+            reDifSignalValue =difSignalValue1+ nextDifPath1[0]
             reDifPointArray = preDifPath[2]+nextDifPath[2].drop(1)
             reDifPath = [reDifSignalValue, difDelay, reDifPointArray]
             difPathArray.push(reDifPath)

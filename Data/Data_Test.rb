@@ -54,18 +54,19 @@ module Data_Test
   module_function :grid
 
   def spaceGrid()
-    point1 = [200, 1200, 0]
-    point2 = [15600, 6200, 0]
+    point1 = [350, 1200, 0]
+    point2 = [15000, 6000, 0]
     dx = (point2[0]- point1[0])/30.0
     dy = (point2[1]- point1[1])/10.0
-    z1 = 5700.0
-    z2 = 2000.0
+    z1 = 4500.0
+    z2 = 1200.0
     pointArray = Array.new
     id =10000
     for i in 0..29
       for j in 0..9
         id =id +1
         point = [id, point1[0]+dx*i, point1[1]+dy*j, z1]
+        #id =id +1
         #point2 = [id, point1[0]+dx*i, point1[1]+dy*j, z2]
         pointArray.push(point)
         #pointArray.push(point2)
@@ -147,7 +148,7 @@ module Data_Test
 
   module_function :cubeQueryByPlane
 
-  #计算首径覆盖数目大于四终端的覆盖率
+  #计算首径覆盖数目大于等于4的终端覆盖率
   def countFirstPath(firstPathArray)
     number = 0
     firstPathArray.each do |path|
@@ -159,6 +160,16 @@ module Data_Test
   end
 
   module_function :countFirstPath
+
+  #计算终端接收到4个不同网元信号的覆盖率
+  def countFourPath(signalPath)
+    fourPathHash = Hash.new
+    signalPath.each do |path|
+
+    end
+
+  end
+  module_function :countFourPath
 
 end
 

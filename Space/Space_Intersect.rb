@@ -245,8 +245,9 @@ module Space_Intersect
   #判定绕射点合法性
   def difRactPoint(beginpoint, endpoint, diFrPoint, cube)
     # p "test3#{cube.plane}"
-    for i in 0..5
-      j=0
+    l=cube.plane.size-1
+    j=0
+    for i in 0..l
       difRactPoint1=intersect(beginpoint, diFrPoint, cube.plane[i])
       difRactPoint2=intersect(endpoint, diFrPoint, cube.plane[i])
       if (difRactPoint1!=beginpoint&&difRactPoint1!=diFrPoint)||(difRactPoint2!=endpoint&&difRactPoint2!=diFrPoint)
@@ -263,4 +264,5 @@ module Space_Intersect
   end
 
   module_function :difRactPoint
+
 end
