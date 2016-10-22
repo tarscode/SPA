@@ -14,6 +14,7 @@ $SPA_Path = '/Users/liuyang/Documents/Github/SPA'
 require File.join($SPA_Path, '/IO/SPA_Read')
 require File.join($SPA_Path, '/IO/SPA_Write')
 require File.join($SPA_Path, '/IO/SPA_File')
+#require File.join($SPA_Path, '/IO/IO_Server')
 require File.join($SPA_Path, '/Data/Data_Convert')
 require File.join($SPA_Path, '/Ray/Ray_Refract')
 require File.join($SPA_Path, '/Ray/Ray_Reflect')
@@ -33,8 +34,8 @@ def rayTracing
   SPA_File.inputFile
   p "rayTracing"
   #生成终端数据
-  ueData = Data_Test.ue(10)
-  SPA_Write.ueWrite(ueData)
+  #ueData = Data_Test.ue(2)
+  #SPA_Write.ueWrite(ueData)
   #创建网格
   #gridData = Data_Test.grid()
   #SPA_Write.ueWrite(gridData)
@@ -71,7 +72,7 @@ def rayTracing
   #数据测试
   #Data_Test.cubeTest(cubeArray)
   #cubeId = Data_Test.cubeQueryByPlane(10001,cubeArray)[0]
-  cubeId = Data_Test.cubeQueryByPoint([10400, 6200, 6200], cubeArray)[0]
+  #cubeId = Data_Test.cubeQueryByPoint([10400, 6200, 6200], cubeArray)[0]
   #写入源点
   #pointArray = Data_Init.initPointTree(neArray,cubeArray)
   #SPA_Write.treeWrite(pointArray)
@@ -133,8 +134,6 @@ def rayTracing
   #写入空间路径
   SPA_Write.signalPathWrite(signalPathArray)
   p "SPA end"
-  #return pathArray
-
 end
 
 p Benchmark.realtime {

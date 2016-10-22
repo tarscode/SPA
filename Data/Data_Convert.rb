@@ -93,7 +93,7 @@ module Data_Convert
 
   #删除不满足信号强度的路径
   def effectPath(pathArray)
-    pathArray.delete_if { |path| (path.loss).real.nan? == true || path.loss.nan? == true || path.loss<-200 }
+    pathArray.delete_if { |path| (path.loss).real.nan? == true || path.loss.nan? == true || path.loss<-110 }
     return pathArray
   end
 

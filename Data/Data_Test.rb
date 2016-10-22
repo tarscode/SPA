@@ -34,11 +34,11 @@ module Data_Test
   module_function :ue
 
   def grid()
-    point1 = [5300, 1699, 0]
-    point2 = [10300, 6100, 0]
+    point1 = [5450, 750, 0]
+    point2 = [10350, 6150, 0]
     dx = (point2[0]- point1[0])/10.0
     dy = (point2[1]- point1[1])/10.0
-    z = 4000.0
+    z = 4500.0
     pointArray = Array.new
     id =10000
     for i in 0..9
@@ -53,6 +53,7 @@ module Data_Test
 
   module_function :grid
 
+  #一楼二楼整个空间覆盖
   def spaceGrid()
     point1 = [350, 1200, 0]
     point2 = [15000, 6000, 0]
