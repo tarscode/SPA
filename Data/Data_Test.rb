@@ -38,11 +38,12 @@ module Data_Test
     point2 = [10350, 6150, 0]
     dx = (point2[0]- point1[0])/10.0
     dy = (point2[1]- point1[1])/10.0
-    z = 4500.0
+    #z = 4500.0
+    z = 1500.0
     pointArray = Array.new
     id =10000
-    for i in 0..9
-      for j in 0..9
+    for i in 0..5
+      for j in 0..5
         id =id +1
         point = [id, point1[0]+dx*i, point1[1]+dy*j, z]
         pointArray.push(point)
@@ -67,10 +68,10 @@ module Data_Test
       for j in 0..9
         id =id +1
         point = [id, point1[0]+dx*i, point1[1]+dy*j, z1]
-        #id =id +1
-        #point2 = [id, point1[0]+dx*i, point1[1]+dy*j, z2]
+        id =id +1
+        point2 = [id, point1[0]+dx*i, point1[1]+dy*j, z2]
         pointArray.push(point)
-        #pointArray.push(point2)
+        pointArray.push(point2)
       end
     end
     return pointArray

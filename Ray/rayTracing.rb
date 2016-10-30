@@ -34,13 +34,13 @@ def rayTracing
   SPA_File.inputFile
   p "rayTracing"
   #生成终端数据
-  #ueData = Data_Test.ue(2)
+  #ueData = Data_Test.ue(20)
   #SPA_Write.ueWrite(ueData)
   #创建网格
   #gridData = Data_Test.grid()
   #SPA_Write.ueWrite(gridData)
-  #spaceGridData = Data_Test.spaceGrid()
-  #SPA_Write.ueWrite(spaceGridData)
+  spaceGridData = Data_Test.spaceGrid()
+  SPA_Write.ueWrite(spaceGridData)
   #创建日志文件,OSX环境
   SPA_Write.createFile(2)
   #数据文件名
@@ -126,9 +126,9 @@ def rayTracing
   p Data_Test.countFirstPath(firstPathArray)
   SPA_Write.firstPathWrite(firstPathArray)
   #计算多径
-  #multiPathHash = Data_Convert.multiPath(effectPathArray)
-  #multiPathArray = Data_Convert.hash2Array(multiPathHash)
-  #SPA_Write.multiPathWrite(multiPathArray)
+  multiPathHash = Data_Convert.multiPath(effectPathArray)
+  multiPathArray = Data_Convert.hash2Array(multiPathHash)
+  SPA_Write.multiPathWrite(multiPathArray)
   #写入信号路径
   SPA_Write.spacePathWrite(spacePathArray)
   #写入空间路径
