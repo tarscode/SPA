@@ -39,8 +39,15 @@ def rayTracing
   #创建网格
   #gridData = Data_Test.grid()
   #SPA_Write.ueWrite(gridData)
-  spaceGridData = Data_Test.spaceGrid()
-  SPA_Write.ueWrite(spaceGridData)
+  #生成100组数据
+  #gridData = Data_Test.grid100()
+  #SPA_Write.ueWrite(gridData)
+  #中兴数据对比
+  #gridData = Data_Test.gridzte()
+  #SPA_Write.ueWrite(gridData)
+
+  #spaceGridData = Data_Test.spaceGrid()
+  #SPA_Write.ueWrite(spaceGridData)
   #创建日志文件,OSX环境
   SPA_Write.createFile(2)
   #数据文件名
@@ -77,9 +84,9 @@ def rayTracing
   #pointArray = Data_Init.initPointTree(neArray,cubeArray)
   #SPA_Write.treeWrite(pointArray)
   #读取源点
-  #pointArray = SPA_Read.point(pointFile)
-  #levelPointThreeArray = Data_Convert.levelThreePointArray(pointArray)
-  #Data_Init.pointInit(pointArray)
+  pointArray = SPA_Read.point(pointFile)
+  levelPointThreeArray = Data_Convert.levelThreePointArray(pointArray)
+  Data_Init.pointInit(pointArray)
   #总径计算
   ueArray.each do |ue|
     neArray.each do |ne|
@@ -107,10 +114,10 @@ def rayTracing
   end
 
   #计算多次反射
-  ueArray.each do |ue|
-    #multiReflectPathArray = Ray_Reflect.multiReflect(ue, cubeArray, levelPointThreeArray)
-    #pathArray = pathArray + multiReflectPathArray
-  end
+  #ueArray.each do |ue|
+  #  multiReflectPathArray = Ray_Reflect.multiReflect(ue, cubeArray, levelPointThreeArray)
+  #  pathArray = pathArray + multiReflectPathArray
+  #end
 
   #删除低于信号阀值的路径
   effectPathArray = Data_Convert.effectPath(pathArray)

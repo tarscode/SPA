@@ -54,6 +54,43 @@ module Data_Test
 
   module_function :grid
 
+  def grid100()
+    point1 = [5450, 750, 0]
+    point2 = [10350, 6150, 0]
+    dx = (point2[0]- point1[0])/10.0
+    dy = (point2[1]- point1[1])/10.0
+    z = 4500.0
+    #z = 1500.0
+    pointArray = Array.new
+    id =10000
+    for i in 0..9
+      for j in 0..9
+        id =id +1
+        point = [id, point1[0]+dx*i, point1[1]+dy*j, z]
+        pointArray.push(point)
+      end
+    end
+    return pointArray
+  end
+
+  module_function :grid100
+
+  def gridzte()
+    dx = 100.0
+    x = 600.0
+    y = 27800.0
+    z = 1500.0
+    pointArray = Array.new
+    id =10000
+    for i in 0..105
+        id =id +1
+        point = [id, x+dx*i, y, z]
+        pointArray.push(point)
+    end
+    return pointArray
+  end
+
+  module_function :gridzte
   #一楼二楼整个空间覆盖
   def spaceGrid()
     point1 = [350, 1200, 0]
