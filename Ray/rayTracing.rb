@@ -22,6 +22,7 @@ require File.join($SPA_Path, '/Ray/Ray_Difract')
 require File.join($SPA_Path, '/Entity/Path')
 require File.join($SPA_Path, '/Data/Data_Review')
 require File.join($SPA_Path, '/Data/Data_Test')
+require File.join($SPA_Path, '/Data/Data_Cell')
 require 'benchmark'
 require 'logger'
 
@@ -33,6 +34,9 @@ def rayTracing
   #检测输入文件
   SPA_File.inputFile
   p "rayTracing"
+  #生成3GPP终端数据
+  #ueData = Data_Cell.ue(60)
+  #SPA_Write.ueWrite(ueData)
   #生成终端数据
   #ueData = Data_Test.ue(20)
   #SPA_Write.ueWrite(ueData)
@@ -95,16 +99,20 @@ def rayTracing
       #折射计算
       refractPath = Ray_Refract.refract(ne, ue, cubeArray, signal)
       #绕射计算
-      #difractPath = Ray_Difract.difract(ne, ue, cubeArray, signal)
+      difractPath = Ray_Difract.difract(ne, ue, cubeArray, signal)
       #反射计算
       reflectPathArray = Ray_Reflect.reflect(ne, ue, cubeArray, signal)
+      p reflectPathArray
       reflectPathArray.push(refractPath)
-      #if difractPath != nil && difractPath.length !=0 then
+      if difractPath != nil && difractPath.length !=0 then
       #p "difractPath#{difractPath}"
-      #  reflectPathArray=reflectPathArray+difractPath
-      #end
+        reflectPathArray=reflectPathArray+difractPath
+      end
       #转换后删除空的数组
-      reflectPathArray = Data_Convert.deleteNilPath(reflectPathArray)
+      reflectPathArray = Data_C
+
+
+      onvert.deleteNilPath(reflectPathArray)
 
       #不为空的路径加入路径数组
       if reflectPathArray != nil && reflectPathArray.length !=0 then
@@ -114,15 +122,15 @@ def rayTracing
   end
 
   #计算多次反射
-  #ueArray.each do |ue|
-  #  multiReflectPathArray = Ray_Reflect.multiReflect(ue, cubeArray, levelPointThreeArray)
-  #  pathArray = pathArray + multiReflectPathArray
-  #end
+  ueArray.each do |ue|
+    multiReflectPathArray = Ray_Reflect.multiReflect(ue, cubeArray, levelPointThreeArray)
+    pathArray = pathArray + multiReflectPathArray
+  end
 
   #删除低于信号阀值的路径
-  effectPathArray = Data_Convert.effectPath(pathArray)
+  #effectPathArray = Data_Convert.effectPath(pathArray)
   #包含不满足信号强度的全部路径
-  #effectPathArray = pathArray
+  effectPathArray = pathArray
 
   signalPathArray = Data_Convert.pathToSignalPath(effectPathArray)
   spacePathArray = Data_Convert.pathToSpacePath(effectPathArray)

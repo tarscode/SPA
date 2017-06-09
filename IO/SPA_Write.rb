@@ -84,6 +84,18 @@ module SPA_Write
 
   module_function :ueWrite
 
+  def neWrite(neArray)
+    neFile = File.new($SPA_Path+'//Doc//BaseStation'+".txt", "w+")
+    neArray.each do |ue|
+      for i in 0..3
+        neFile.syswrite(ue[i].to_s+" ")
+      end
+      neFile.syswrite("\n")
+    end
+  end
+
+  module_function :neWrite
+
   #写入定位点
   def locationWrite(arr)
     ueFile = File.new($SPA_Path+'//Doc//Position'+".txt", "w+")
